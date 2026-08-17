@@ -15,7 +15,7 @@ import { getSessionManager, routeForSessionRequest, sessionAcceptsCredential, se
 import { getOAuthManager, hashToken } from './oauth-manager.js';
 import {
   SERVER_CONFIG,
-  INSFORGE_CONFIG,
+  YARAH_CONFIG,
   OAUTH_CONFIG,
   STREAMABLE_HTTP_ENDPOINTS,
   SSE_ENDPOINTS,
@@ -52,7 +52,7 @@ import { readRefreshToken } from './refresh-token.js';
 import { getProjectKeyCache } from './project-key-cache.js';
 import { accessTokenKey, refreshTokenKey } from './config.js';
 import { statusForHttpError, isAuthorizationRefusal } from './error-status.js';
-import { revokePlatformToken, exchangePlatformCode, refreshPlatformToken, type PlatformTokens } from './insforge-api.js';
+import { revokePlatformToken, exchangePlatformCode, refreshPlatformToken, type PlatformTokens } from './yarah-api.js';
 import { PACKAGE_VERSION } from '../shared/version.js';
 
 // ============================================================================
@@ -189,7 +189,7 @@ function sendUnavailable(res: Response): Response {
     .json({
       error: 'temporarily_unavailable',
       error_description:
-        'Could not reach the InsForge platform to check this session. Your sign-in has not been ' +
+        'Could not reach the Yarah platform to check this session. Your sign-in has not been ' +
         'invalidated — retry shortly.',
     });
 }
@@ -340,7 +340,7 @@ app.get(API_ENDPOINTS.health, (_req: Request, res: Response) => {
 
   res.json({
     status: 'ok',
-    server: 'insforge-mcp',
+    server: 'yarah-mcp',
     version: PACKAGE_VERSION,
     protocols: {
       streamableHttp: '2025-03-26',
@@ -504,7 +504,7 @@ app.post(OAUTH_ENDPOINTS.register, (req: Request, res: Response) => {
 
 /**
  * OAuth Authorization Endpoint
- * Redirects to Insforge OAuth for user authentication
+ * Redirects to Yarah OAuth for user authentication
  */
 app.get(OAUTH_ENDPOINTS.authorize, async (req: Request, res: Response) => {
   const { client_id, redirect_uri, response_type, scope, state, code_challenge, code_challenge_method } = req.query;
@@ -512,7 +512,7 @@ app.get(OAUTH_ENDPOINTS.authorize, async (req: Request, res: Response) => {
   if (!isOAuthConfigured()) {
     return sendOAuthError(req, res, 500, {
       error: 'server_error',
-      error_description: 'OAuth client credentials not configured. Set INSFORGE_CLIENT_ID and INSFORGE_CLIENT_SECRET.',
+      error_description: 'OAuth client credentials not configured. Set YARAH_CLIENT_ID and YARAH_CLIENT_SECRET.',
     });
   }
 
@@ -643,7 +643,7 @@ app.get(OAUTH_ENDPOINTS.authorize, async (req: Request, res: Response) => {
   try {
     const oauthManager = getOAuthManager();
 
-    const { handle, sealedState, insforgeCodeChallenge } = await oauthManager.createAuthorizationState({
+    const { handle, sealedState, yarahCodeChallenge } = await oauthManager.createAuthorizationState({
       redirectUri: redirect_uri as string,
       scope: resolvedScope,
       state: state as string | undefined,
@@ -651,19 +651,19 @@ app.get(OAUTH_ENDPOINTS.authorize, async (req: Request, res: Response) => {
       codeChallengeMethod: code_challenge_method as string | undefined,
     });
 
-    const authUrl = new URL(`${INSFORGE_CONFIG.apiBase}/api/oauth/v1/authorize`);
-    authUrl.searchParams.set('client_id', INSFORGE_CONFIG.clientId);
+    const authUrl = new URL(`${YARAH_CONFIG.apiBase}/api/oauth/v1/authorize`);
+    authUrl.searchParams.set('client_id', YARAH_CONFIG.clientId);
     authUrl.searchParams.set('redirect_uri', OAUTH_CONFIG.callbackUrl);
     authUrl.searchParams.set('response_type', 'code');
-    authUrl.searchParams.set('scope', INSFORGE_CONFIG.oauthScopes);
+    authUrl.searchParams.set('scope', YARAH_CONFIG.oauthScopes);
     // The handle, not the record. The platform stores `state` in a 255-char
     // column; the record itself rides in a cookie on our own origin.
     res.cookie(authStateCookieName(SERVER_CONFIG.publicUrl), sealedState, cookieAttributes(SERVER_CONFIG.publicUrl));
     authUrl.searchParams.set('state', handle);
-    authUrl.searchParams.set('code_challenge', insforgeCodeChallenge);
+    authUrl.searchParams.set('code_challenge', yarahCodeChallenge);
     authUrl.searchParams.set('code_challenge_method', 'S256');
 
-    console.log(`[OAuth] Redirecting to Insforge OAuth: ${authUrl.toString()}`);
+    console.log(`[OAuth] Redirecting to Yarah OAuth: ${authUrl.toString()}`);
     res.redirect(authUrl.toString());
   } catch (error) {
     // john-bot's Critical on this PR, and it is the tenth consumer in a change
@@ -680,7 +680,7 @@ app.get(OAUTH_ENDPOINTS.authorize, async (req: Request, res: Response) => {
 
 /**
  * OAuth Callback Endpoint
- * Called by Insforge OAuth after user authenticates
+ * Called by Yarah OAuth after user authenticates
  */
 app.get(OAUTH_ENDPOINTS.callback, async (req: Request, res: Response) => {
   const { code, state, error, error_description } = req.query;
@@ -688,10 +688,10 @@ app.get(OAUTH_ENDPOINTS.callback, async (req: Request, res: Response) => {
   const oauthManager = getOAuthManager();
 
   if (error) {
-    console.error('[OAuth] Insforge returned error:', error, error_description);
+    console.error('[OAuth] Yarah returned error:', error, error_description);
     getAnalyticsService().trackOAuthFailure({
-      errorType: 'insforge_error',
-      errorDescription: (error_description as string) || (error as string) || 'Unknown Insforge error',
+      errorType: 'yarah_error',
+      errorDescription: (error_description as string) || (error as string) || 'Unknown Yarah error',
       endpoint: '/oauth/callback',
     });
     const authState = state ? (await openStateFromRequest(req, state as string))?.authState ?? null : null;
@@ -788,9 +788,9 @@ app.get(OAUTH_ENDPOINTS.callback, async (req: Request, res: Response) => {
       tokens = await exchangePlatformCode({
         code: code as string,
         redirectUri: OAUTH_CONFIG.callbackUrl,
-        clientId: INSFORGE_CONFIG.clientId,
-        clientSecret: INSFORGE_CONFIG.clientSecret,
-        codeVerifier: authState.insforgeCodeVerifier,
+        clientId: YARAH_CONFIG.clientId,
+        clientSecret: YARAH_CONFIG.clientSecret,
+        codeVerifier: authState.yarahCodeVerifier,
       });
     } catch (error) {
       console.error('[OAuth] Could not reach the platform to exchange the code:', error);
@@ -810,10 +810,10 @@ app.get(OAUTH_ENDPOINTS.callback, async (req: Request, res: Response) => {
           // itself; it tells the person nothing and is what was reaching the
           // browser before.
           error_description:
-            'The InsForge platform could not be reached to complete this sign-in.',
+            'The Yarah platform could not be reached to complete this sign-in.',
         },
         {
-          heading: 'InsForge could not be reached',
+          heading: 'Yarah could not be reached',
           message:
             'This is temporary and nothing is wrong with your account or your editor. ' +
             'Wait a moment and start the sign-in again.',
@@ -825,14 +825,14 @@ app.get(OAUTH_ENDPOINTS.callback, async (req: Request, res: Response) => {
     // Same distinction as the refresh grant, on the path a ROTATION actually
     // hits: during one nobody holds a refresh token yet, so everyone is doing a
     // fresh sign-in and arrives here. `invalid_client` means the platform
-    // rejected OUR credentials — a wrong INSFORGE_CLIENT_SECRET — and telling
+    // rejected OUR credentials — a wrong YARAH_CLIENT_SECRET — and telling
     // the person their sign-in failed sends them round a loop that cannot
     // terminate, because every retry fails identically until an operator fixes
     // the config. Max caught this one; I had fixed only the refresh path.
     if (tokens.error === 'invalid_client' || tokens.error === 'unauthorized_client') {
       console.error(
         '[OAuth] The platform rejected OUR client credentials during sign-in. ' +
-          'INSFORGE_CLIENT_ID/SECRET are wrong for this deployment — no user action ' +
+          'YARAH_CLIENT_ID/SECRET are wrong for this deployment — no user action ' +
           'can fix this.'
       );
       getAnalyticsService().trackOAuthFailure({
@@ -877,7 +877,7 @@ app.get(OAUTH_ENDPOINTS.callback, async (req: Request, res: Response) => {
         {
           heading: 'Sign-in could not be completed',
           message:
-            'The InsForge platform did not return a token for this sign-in. Trying again ' +
+            'The Yarah platform did not return a token for this sign-in. Trying again ' +
             'usually works; if it does not, the details below are what support will ask for.',
           action: undefined,
         }
@@ -1126,8 +1126,8 @@ app.post(OAUTH_ENDPOINTS.token, async (req: Request, res: Response) => {
     try {
       tokens = await refreshPlatformToken({
         refreshToken: payload.platformRefreshToken,
-        clientId: INSFORGE_CONFIG.clientId,
-        clientSecret: INSFORGE_CONFIG.clientSecret,
+        clientId: YARAH_CONFIG.clientId,
+        clientSecret: YARAH_CONFIG.clientSecret,
       });
     } catch (error) {
       // Could not reach the platform, which is not the client's fault and may
@@ -1137,7 +1137,7 @@ app.post(OAUTH_ENDPOINTS.token, async (req: Request, res: Response) => {
       res.set('Retry-After', '5');
       return res.status(503).json({
         error: 'temporarily_unavailable',
-        error_description: 'The InsForge platform could not be reached. Try again shortly.',
+        error_description: 'The Yarah platform could not be reached. Try again shortly.',
       });
     }
 
@@ -1147,7 +1147,7 @@ app.post(OAUTH_ENDPOINTS.token, async (req: Request, res: Response) => {
     //
     //   {"error":"invalid_client","message":"Invalid client credentials"}  401
     //
-    // is what it returns when INSFORGE_CLIENT_SECRET is wrong, which is exactly
+    // is what it returns when YARAH_CLIENT_SECRET is wrong, which is exactly
     // what a botched rotation or a half-finished client swap produces. Reported
     // as invalid_grant it tells EVERY connected user to sign in again, they all
     // do, and every new sign-in fails the same way — a stampede caused by our
@@ -1156,7 +1156,7 @@ app.post(OAUTH_ENDPOINTS.token, async (req: Request, res: Response) => {
     if (tokens.error === 'invalid_client') {
       console.error(
         '[OAuth] The platform rejected OUR client credentials on refresh. ' +
-          'INSFORGE_CLIENT_ID/SECRET are wrong for this deployment — this is not the ' +
+          'YARAH_CLIENT_ID/SECRET are wrong for this deployment — this is not the ' +
           "user's sign-in expiring."
       );
       getAnalyticsService().trackOAuthFailure({
@@ -1270,7 +1270,7 @@ app.post(OAUTH_ENDPOINTS.revoke, async (req: Request, res: Response) => {
   getProjectKeyCache().forgetUser(payload.userId);
 
   try {
-    await revokePlatformToken(payload.platformAccessToken, INSFORGE_CONFIG.clientId);
+    await revokePlatformToken(payload.platformAccessToken, YARAH_CONFIG.clientId);
     console.log(`[OAuth] Platform token revoked for ${payload.userId}`);
     return res.status(200).send();
   } catch (error) {
@@ -1910,7 +1910,7 @@ async function startServer() {
     const server = app.listen(SERVER_CONFIG.port, SERVER_CONFIG.host, () => {
       console.log(`
 ╔═══════════════════════════════════════════════════════════════════════╗
-║              Insforge MCP Remote Server (OAuth)                       ║
+║              Yarah MCP Remote Server (OAuth)                       ║
 ╚═══════════════════════════════════════════════════════════════════════╝
 
 🚀 Server: http://${SERVER_CONFIG.host}:${SERVER_CONFIG.port}
@@ -1923,7 +1923,7 @@ async function startServer() {
 │   Client config:
 │   {
 │     "mcpServers": {
-│       "insforge": {
+│       "yarah": {
 │         "url": "${SERVER_CONFIG.publicUrl}${STREAMABLE_HTTP_ENDPOINTS.mcp}"
 │       }
 │     }
@@ -1939,7 +1939,7 @@ async function startServer() {
 │   Client config:
 │   {
 │     "mcpServers": {
-│       "insforge": {
+│       "yarah": {
 │         "type": "sse",
 │         "url": "${SERVER_CONFIG.publicUrl}${SSE_ENDPOINTS.sse}"
 │       }
@@ -1959,8 +1959,8 @@ async function startServer() {
 
 💾 Configuration:
    • Sessions:   in this process only — a restart ends them
-   • Insforge:   ${INSFORGE_CONFIG.apiBase}
-   • Frontend:   ${INSFORGE_CONFIG.frontendUrl}
+   • Yarah:   ${YARAH_CONFIG.apiBase}
+   • Frontend:   ${YARAH_CONFIG.frontendUrl}
    • Analytics:  ${isAnalyticsConfigured() ? 'Mixpanel enabled' : 'Disabled (set MIXPANEL_TOKEN)'}
 `);
     });
@@ -2029,7 +2029,7 @@ async function startServer() {
  * separator differs.
  *
  * And through realpathSync, which is the part I got wrong first: package.json
- * publishes this file as the `insforge-mcp-server` bin, npm installs bins as
+ * publishes this file as the `yarah-mcp-server` bin, npm installs bins as
  * SYMLINKS, and Node resolves symlinks for `import.meta.url` but not for
  * argv[1]. So the naive comparison was false when launched by its own installed
  * name, and the server silently did not start — no error, no log, nothing to

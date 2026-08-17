@@ -320,7 +320,7 @@ function isLoopbackIpLiteral(hostname: string): boolean {
  * including the port. This mirrors the platform's `matchRedirectUri`
  * (`src/utils/oauth.ts:386`) rather than inventing a second dialect —
  * flattening that function to `includes()` is what would have broken
- * `insforge login`, whose CLI binds `server.listen(0, '127.0.0.1')`.
+ * `yarah login`, whose CLI binds `server.listen(0, '127.0.0.1')`.
  */
 export function isRegisteredRedirectUri(
   registration: ClientRegistration,

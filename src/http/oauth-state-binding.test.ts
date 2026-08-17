@@ -9,9 +9,9 @@ import { describe, it, expect, beforeAll } from 'vitest';
  * parameter, and one without the other must be worth nothing.
  */
 
-// The manager derives its key from INSFORGE_CLIENT_SECRET at call time, so the
+// The manager derives its key from YARAH_CLIENT_SECRET at call time, so the
 // environment has to be set before the module is imported.
-process.env.INSFORGE_CLIENT_SECRET ||= 'test-secret-for-binding';
+process.env.YARAH_CLIENT_SECRET ||= 'test-secret-for-binding';
 
 let manager: import('./oauth-manager.js').OAuthManager;
 
@@ -36,7 +36,7 @@ describe('a sealed record is only valid with its own handle', () => {
     expect(opened).not.toBeNull();
     expect(opened?.redirectUri).toBe(request.redirectUri);
     expect(opened?.state).toBe(request.state);
-    expect(opened?.insforgeCodeVerifier).toBeTruthy();
+    expect(opened?.yarahCodeVerifier).toBeTruthy();
   });
 
   it(`refuses another authorization's handle`, async () => {

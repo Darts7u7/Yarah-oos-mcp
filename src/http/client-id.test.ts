@@ -110,7 +110,7 @@ describe('redirect_uri matching', () => {
     //
     // The right fix is to narrow the claim, NOT to widen the code. The
     // platform's matchRedirectUri is byte-exact for non-loopback too
-    // (insforge-cloud-backend src/utils/oauth.ts:412), so parsing everything
+    // (yarah-cloud-backend src/utils/oauth.ts:412), so parsing everything
     // would make us diverge from the server we are deliberately mirroring.
     // Pinned in both directions so neither drifts silently.
     expect(isRegisteredRedirectUri(reg, 'HTTP://127.0.0.1:8765/callback')).toBe(true);
@@ -226,7 +226,7 @@ describe('isAcceptableRedirectUri', () => {
     // client to enforce a SHOULD is the wrong trade here.
     for (const uri of [
       'cursor://anysphere.cursor-retrieval/oauth/callback',
-      'vscode://insforge.mcp/callback',
+      'vscode://yarah.mcp/callback',
       'com.example.app:/oauth2redirect',
     ]) {
       expect(isAcceptableRedirectUri(uri)).toBe(true);
@@ -362,7 +362,7 @@ describe('the id itself is bounded, not just its parts', () => {
 
 describe('loopback redirect_uris ignore the port (RFC 8252 §7.3)', () => {
   // Max found the same bug in the platform's matchRedirectUri, where it had
-  // been flattened to includes() and would have broken `insforge login` — the
+  // been flattened to includes() and would have broken `yarah login` — the
   // CLI binds server.listen(0, '127.0.0.1'), so its port differs every run.
   // The MCP had it too: a native MCP client registers on an ephemeral port,
   // and the SDK re-registers only when it holds no client information at all,

@@ -36,7 +36,7 @@ describe('the refresh token round trip', () => {
 
 describe('what must NOT open one', () => {
   it('refuses a token sealed under a different secret', () => {
-    // The rotation case: INSFORGE_CLIENT_SECRET changes, every refresh token
+    // The rotation case: YARAH_CLIENT_SECRET changes, every refresh token
     // issued under the old one stops opening. That is the intended revocation
     // and it is now five artifacts wide, not four.
     const token = issueRefreshToken(PAYLOAD, KEY);

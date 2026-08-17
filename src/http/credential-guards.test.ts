@@ -47,9 +47,9 @@ beforeAll(async () => {
   await new Promise<void>((resolve) => platform.listen(0, '127.0.0.1', resolve));
   const platformPort = (platform.address() as AddressInfo).port;
 
-  process.env.INSFORGE_API_BASE = `http://127.0.0.1:${platformPort}`;
-  process.env.INSFORGE_CLIENT_ID = 'test-client-id';
-  process.env.INSFORGE_CLIENT_SECRET = 'test-client-secret';
+  process.env.YARAH_API_BASE = `http://127.0.0.1:${platformPort}`;
+  process.env.YARAH_CLIENT_ID = 'test-client-id';
+  process.env.YARAH_CLIENT_SECRET = 'test-client-secret';
   process.env.MCP_SERVER_URL = 'http://127.0.0.1';
 
   // Imported AFTER the env is set, and importing no longer starts a listener —
@@ -130,7 +130,7 @@ describe('the platform rejecting OUR credentials', () => {
 
     const body = (await response.json()) as { error: string; error_description: string };
     expect(body.error).toBe('temporarily_unavailable');
-    // The whole point: a wrong INSFORGE_CLIENT_SECRET must not send every
+    // The whole point: a wrong YARAH_CLIENT_SECRET must not send every
     // connected user to re-authenticate, because they all would, and every new
     // sign-in would fail the same way until an operator fixed the config.
     expect(body.error_description).not.toMatch(/sign in again/i);

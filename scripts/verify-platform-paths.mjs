@@ -23,7 +23,7 @@
  *   node scripts/verify-platform-paths.mjs [apiBase]
  */
 
-const BASE = (process.argv[2] || process.env.INSFORGE_API_BASE || 'https://api.insforge.dev').replace(
+const BASE = (process.argv[2] || process.env.YARAH_API_BASE || 'https://api.yarah.dev').replace(
   /\/+$/,
   ''
 );
@@ -32,14 +32,14 @@ const BASE = (process.argv[2] || process.env.INSFORGE_API_BASE || 'https://api.i
 // well-formed value that no tenant owns — the point is the route, not the row.
 const NOBODY = '00000000-0000-0000-0000-000000000000';
 const PATHS = [
-  { method: 'GET', path: '/auth/v1/profile', from: 'insforge-api.ts validateToken' },
-  { method: 'GET', path: '/organizations/v1', from: 'insforge-api.ts getAllUserProjects' },
-  { method: 'GET', path: `/organizations/v1/${NOBODY}/projects`, from: 'insforge-api.ts' },
-  { method: 'GET', path: `/projects/v1/${NOBODY}`, from: 'insforge-api.ts getProject' },
-  { method: 'GET', path: `/projects/v1/${NOBODY}/access-api-key`, from: 'insforge-api.ts' },
+  { method: 'GET', path: '/auth/v1/profile', from: 'yarah-api.ts validateToken' },
+  { method: 'GET', path: '/organizations/v1', from: 'yarah-api.ts getAllUserProjects' },
+  { method: 'GET', path: `/organizations/v1/${NOBODY}/projects`, from: 'yarah-api.ts' },
+  { method: 'GET', path: `/projects/v1/${NOBODY}`, from: 'yarah-api.ts getProject' },
+  { method: 'GET', path: `/projects/v1/${NOBODY}/access-api-key`, from: 'yarah-api.ts' },
   { method: 'GET', path: '/api/oauth/v1/authorize', from: 'server.ts /oauth/authorize' },
-  { method: 'POST', path: '/api/oauth/v1/token', from: 'insforge-api.ts exchangeCode' },
-  { method: 'POST', path: '/api/oauth/v1/revoke', from: 'insforge-api.ts revoke' },
+  { method: 'POST', path: '/api/oauth/v1/token', from: 'yarah-api.ts exchangeCode' },
+  { method: 'POST', path: '/api/oauth/v1/revoke', from: 'yarah-api.ts revoke' },
 ];
 
 const EXISTS = new Set([200, 201, 204, 302, 400, 401, 403, 405, 422]);

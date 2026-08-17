@@ -7,7 +7,7 @@ import {
   sendUnauthorized,
 } from './auth-challenge.js';
 
-const BASE = 'https://mcp.insforge.dev';
+const BASE = 'https://mcp.yarah.dev';
 
 function mockResponse() {
   const res = {
@@ -142,9 +142,9 @@ describe('normaliseBaseUrl', () => {
     // a doubled slash.
     const { normaliseBaseUrl } = await import('./config.js');
 
-    expect(normaliseBaseUrl('https://mcp.insforge.dev/')).toBe('https://mcp.insforge.dev');
-    expect(normaliseBaseUrl('https://mcp.insforge.dev///')).toBe('https://mcp.insforge.dev');
-    expect(normaliseBaseUrl('https://mcp.insforge.dev')).toBe('https://mcp.insforge.dev');
+    expect(normaliseBaseUrl('https://mcp.yarah.dev/')).toBe('https://mcp.yarah.dev');
+    expect(normaliseBaseUrl('https://mcp.yarah.dev///')).toBe('https://mcp.yarah.dev');
+    expect(normaliseBaseUrl('https://mcp.yarah.dev')).toBe('https://mcp.yarah.dev');
     // A path-bearing base keeps its path, loses only the trailing slash.
     expect(normaliseBaseUrl('https://host/base/')).toBe('https://host/base');
   });
@@ -156,7 +156,7 @@ describe('no advertised URL can contain a doubled slash', () => {
   // in at least three separate places, at three different steps — the AS
   // metadata, the project-selection redirect, and the authorize links in 401
   // bodies. Per-consumer patching missed two of them.
-  const SLASHED = 'https://mcp.insforge.dev/';
+  const SLASHED = 'https://mcp.yarah.dev/';
 
   /** Everything after the scheme, so `https://` itself is not a false hit. */
   const hasDoubledSlash = (url: string) => url.replace(/^[a-z]+:\/\//, '').includes('//');

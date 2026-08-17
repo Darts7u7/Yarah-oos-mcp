@@ -12,7 +12,7 @@ jobs:
   integration-real:
     runs-on: ubuntu-latest
     # Only run when secrets are available (prevents failures on forks)
-    if: ${{ github.repository_owner == 'InsForge' }}
+    if: ${{ github.repository_owner == 'Yarah' }}
 
     timeout-minutes: 10
 
@@ -33,8 +33,8 @@ jobs:
         run: npm run test:integration:real
         env:
           INTEGRATION_TEST_ENABLED: 'true'
-          INSFORGE_CLIENT_SECRET: ${{ secrets.INSFORGE_API_KEY }}
-          INSFORGE_API_BASE: ${{ secrets.INSFORGE_API_BASE_URL }}
-          INTEGRATION_FUNCTION_SLUG: ${{ secrets.INSFORGE_FUNCTION_SLUG }}
-          INTEGRATION_TABLE_NAME: ${{ secrets.INSFORGE_TABLE_NAME }}
-          INTEGRATION_LOG_SOURCE: ${{ secrets.INSFORGE_LOG_SOURCE }}
+          YARAH_CLIENT_SECRET: ${{ secrets.YARAH_API_KEY }}
+          YARAH_API_BASE: ${{ secrets.YARAH_API_BASE_URL }}
+          INTEGRATION_FUNCTION_SLUG: ${{ secrets.YARAH_FUNCTION_SLUG }}
+          INTEGRATION_TABLE_NAME: ${{ secrets.YARAH_TABLE_NAME }}
+          INTEGRATION_LOG_SOURCE: ${{ secrets.YARAH_LOG_SOURCE }}

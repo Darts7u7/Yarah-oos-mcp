@@ -9,7 +9,7 @@ name: Verify Deployed Discovery
 # The script is read-only: it fetches discovery documents and makes one
 # unauthenticated MCP request. It registers no client and needs no secret.
 #
-# Expect this to be RED until mcp.insforge.dev is deployed current — that is
+# Expect this to be RED until mcp.yarah.dev is deployed current — that is
 # the true state of production, not a broken workflow.
 
 on:
@@ -23,7 +23,7 @@ on:
       url:
         description: 'Base URL of the deployed server'
         required: false
-        default: 'https://mcp.insforge.dev'
+        default: 'https://mcp.yarah.dev'
       expected_version:
         # Required on purpose. This is the one assertion that catches a
         # container serving the right name at the wrong build, which is how
@@ -57,6 +57,6 @@ jobs:
         # workflow chooses it, and interpolating it directly would let it
         # terminate the quoting and run arbitrary shell.
         env:
-          DEPLOY_URL: ${{ github.event.inputs.url || 'https://mcp.insforge.dev' }}
+          DEPLOY_URL: ${{ github.event.inputs.url || 'https://mcp.yarah.dev' }}
           EXPECTED_VERSION: ${{ github.event.inputs.expected_version }}
         run: node scripts/verify-deploy.mjs "$DEPLOY_URL" "$EXPECTED_VERSION"

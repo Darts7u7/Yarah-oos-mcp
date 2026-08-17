@@ -15,7 +15,7 @@ import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
  *   a client id is PUBLIC        -> signing is enough
  *   auth state holds a SECRET    -> it has to be encrypted
  *
- * The secret is `insforgeCodeVerifier`, our PKCE verifier for the call to the
+ * The secret is `yarahCodeVerifier`, our PKCE verifier for the call to the
  * platform. A signed-but-readable envelope would print it in the authorize URL,
  * in the browser's address bar and in the platform's logs. PKCE exists to
  * protect against exactly the party who can read that URL, so publishing the

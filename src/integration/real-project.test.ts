@@ -1,23 +1,23 @@
 /**
  * Real-project integration tests — Phase 1 (read-only / low-risk tools).
  *
- * This suite executes MCP tools against a **live** Insforge backend.
+ * This suite executes MCP tools against a **live** Yarah backend.
  * It never mocks HTTP calls and enforces strict success semantics.
  *
  * Required environment variables (suite is skipped if missing):
  *
  *   INTEGRATION_TEST_ENABLED  = "true"
- *   INSFORGE_CLIENT_SECRET    — admin API key
- *   INSFORGE_API_BASE         — base URL of the live backend
+ *   YARAH_CLIENT_SECRET    — admin API key
+ *   YARAH_API_BASE         — base URL of the live backend
  *   INTEGRATION_FUNCTION_SLUG — (Optional) slug of a stable fixture edge function
  *
  * Optional:
- *   INTEGRATION_LOG_SOURCE   — log source (default: "insforge.logs")
+ *   INTEGRATION_LOG_SOURCE   — log source (default: "yarah.logs")
  */
 
 import 'dotenv/config';
 import { describe, it, expect, beforeAll } from 'vitest';
-import { registerInsforgeTools } from '../shared/tools/index.js';
+import { registerYarahTools } from '../shared/tools/index.js';
 import { sdkToolHost } from '../shared/tools/host.js';
 import {
   createMockServer,
@@ -47,19 +47,19 @@ describe.skipIf(!integrationEnabled)('Real Project Integration Tests (Phase 1)',
   // ------------------------------------------------------------------
   beforeAll(async () => {
     // Validate required env vars (throws on missing, failing the suite)
-    API_KEY = getRequiredEnv('INSFORGE_CLIENT_SECRET');
-    API_BASE_URL = getRequiredEnv('INSFORGE_API_BASE');
+    API_KEY = getRequiredEnv('YARAH_CLIENT_SECRET');
+    API_BASE_URL = getRequiredEnv('YARAH_API_BASE');
 
     // Optional fixtures: skipped gracefully if missing
     FUNCTION_SLUG = process.env.INTEGRATION_FUNCTION_SLUG || '';
 
-    LOG_SOURCE = process.env.INTEGRATION_LOG_SOURCE || 'insforge.logs';
+    LOG_SOURCE = process.env.INTEGRATION_LOG_SOURCE || 'yarah.logs';
 
     // Create a mock MCP server to capture tool registrations
     const { server, tools: registeredTools } = createMockServer();
 
     // Register tools — NO try/catch: a failure here must crash the suite
-    await registerInsforgeTools(sdkToolHost(server), {
+    await registerYarahTools(sdkToolHost(server), {
       apiKey: API_KEY,
       apiBaseUrl: API_BASE_URL,
       mode: 'local',
@@ -152,7 +152,7 @@ describe.skipIf(!integrationEnabled)('Real Project Integration Tests (Phase 1)',
     });
     const text = expectToolSuccess(result);
 
-    // The formatted success message includes a header like "Latest logs from insforge.logs"
+    // The formatted success message includes a header like "Latest logs from yarah.logs"
     expect(
       text.toLowerCase(),
       'Expected log retrieval confirmation in response',

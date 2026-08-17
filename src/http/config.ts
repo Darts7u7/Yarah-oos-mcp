@@ -8,8 +8,8 @@ import { PACKAGE_VERSION } from '../shared/version.js';
 // ============================================================================
 
 program
-  .name('insforge-mcp-server')
-  .description('HTTP MCP server for Insforge backend-as-a-service')
+  .name('yarah-mcp-server')
+  .description('HTTP MCP server for Yarah backend-as-a-service')
   .version(PACKAGE_VERSION, '-v, --version')
   // Defaults come from the environment so a container platform's injected
   // PORT/HOST are honoured. An explicit flag still wins: commander only
@@ -64,23 +64,23 @@ export const SERVER_CONFIG = {
 } as const;
 
 // ============================================================================
-// Insforge Platform Configuration
+// Yarah Platform Configuration
 // ============================================================================
 
-export const INSFORGE_CONFIG = {
-  /** Insforge API base URL */
-  apiBase: process.env.INSFORGE_API_BASE || 'https://api.insforge.dev',
+export const YARAH_CONFIG = {
+  /** Yarah API base URL */
+  apiBase: process.env.YARAH_API_BASE || 'https://api.yarah.dev',
 
-  /** Insforge frontend URL */
-  frontendUrl: process.env.INSFORGE_FRONTEND_URL || 'https://insforge.dev',
+  /** Yarah frontend URL */
+  frontendUrl: process.env.YARAH_FRONTEND_URL || 'https://yarah.dev',
 
-  /** OAuth client ID (registered with Insforge platform) */
-  clientId: process.env.INSFORGE_CLIENT_ID || '',
+  /** OAuth client ID (registered with Yarah platform) */
+  clientId: process.env.YARAH_CLIENT_ID || '',
 
-  /** OAuth client secret (registered with Insforge platform) */
-  clientSecret: process.env.INSFORGE_CLIENT_SECRET || '',
+  /** OAuth client secret (registered with Yarah platform) */
+  clientSecret: process.env.YARAH_CLIENT_SECRET || '',
 
-  /** OAuth scopes to request from Insforge */
+  /** OAuth scopes to request from Yarah */
   oauthScopes: 'user:read organizations:read projects:read projects:write',
 } as const;
 
@@ -89,7 +89,7 @@ export const INSFORGE_CONFIG = {
 // ============================================================================
 
 export const OAUTH_CONFIG = {
-  /** OAuth callback URL for Insforge OAuth */
+  /** OAuth callback URL for Yarah OAuth */
   callbackUrl: `${SERVER_CONFIG.publicUrl}/oauth/callback`,
 
   /** Scopes supported by this MCP server */
@@ -126,13 +126,13 @@ export const OAUTH_CONFIG = {
  * hand, and a server that booted without it would fail at the first
  * registration rather than at boot.
  *
- * Derived from INSFORGE_CLIENT_SECRET through an HMAC with a fixed label, so
+ * Derived from YARAH_CLIENT_SECRET through an HMAC with a fixed label, so
  * the platform secret itself is never the signing key. That separation matters:
  * a client id is public (it travels in every authorize URL), so its signatures
  * are public samples of whatever key produced them. Deriving means those
  * samples are of a key that can do nothing but sign client ids.
  *
- * Rotating INSFORGE_CLIENT_SECRET invalidates every client id, which is the
+ * Rotating YARAH_CLIENT_SECRET invalidates every client id, which is the
  * intended and only revocation mechanism — see client-id.ts.
  */
 const CLIENT_ID_KEY_LABEL = 'mcp-client-id-v1';
@@ -140,7 +140,7 @@ const CLIENT_ID_KEY_LABEL = 'mcp-client-id-v1';
 export function deriveClientIdSigningKey(clientSecret: string): string {
   if (!clientSecret) {
     throw new Error(
-      'INSFORGE_CLIENT_SECRET is required: the client id signing key is derived from it'
+      'YARAH_CLIENT_SECRET is required: the client id signing key is derived from it'
     );
   }
   return createHmac('sha256', clientSecret).update(CLIENT_ID_KEY_LABEL).digest('base64url');
@@ -152,7 +152,7 @@ export function deriveClientIdSigningKey(clientSecret: string): string {
  * throw at import time would take both down for a feature they never use.
  */
 export function clientIdSigningKey(): string {
-  return deriveClientIdSigningKey(INSFORGE_CONFIG.clientSecret);
+  return deriveClientIdSigningKey(YARAH_CONFIG.clientSecret);
 }
 
 // ============================================================================
@@ -177,7 +177,7 @@ const AUTH_STATE_KEY_LABEL = 'mcp-auth-state-v1';
 export function deriveAuthStateKey(clientSecret: string): Buffer {
   if (!clientSecret) {
     throw new Error(
-      'INSFORGE_CLIENT_SECRET is required: the authorization state key is derived from it'
+      'YARAH_CLIENT_SECRET is required: the authorization state key is derived from it'
     );
   }
   return createHmac('sha256', clientSecret).update(AUTH_STATE_KEY_LABEL).digest();
@@ -185,7 +185,7 @@ export function deriveAuthStateKey(clientSecret: string): Buffer {
 
 /** Lazy for the same reason as clientIdSigningKey. */
 export function authStateKey(): Buffer {
-  return deriveAuthStateKey(INSFORGE_CONFIG.clientSecret);
+  return deriveAuthStateKey(YARAH_CONFIG.clientSecret);
 }
 
 /**
@@ -200,14 +200,14 @@ const AUTH_CODE_KEY_LABEL = 'mcp-auth-code-v1';
 
 export function deriveAuthCodeKey(clientSecret: string): Buffer {
   if (!clientSecret) {
-    throw new Error('INSFORGE_CLIENT_SECRET is required: the authorization code key is derived from it');
+    throw new Error('YARAH_CLIENT_SECRET is required: the authorization code key is derived from it');
   }
   return createHmac('sha256', clientSecret).update(AUTH_CODE_KEY_LABEL).digest();
 }
 
 /** Lazy for the same reason as the others. */
 export function authCodeKey(): Buffer {
-  return deriveAuthCodeKey(INSFORGE_CONFIG.clientSecret);
+  return deriveAuthCodeKey(YARAH_CONFIG.clientSecret);
 }
 
 /**
@@ -221,13 +221,13 @@ const ACCESS_TOKEN_KEY_LABEL = 'mcp-access-token-v1';
 
 export function deriveAccessTokenKey(clientSecret: string): Buffer {
   if (!clientSecret) {
-    throw new Error('INSFORGE_CLIENT_SECRET is required: the access token key is derived from it');
+    throw new Error('YARAH_CLIENT_SECRET is required: the access token key is derived from it');
   }
   return createHmac('sha256', clientSecret).update(ACCESS_TOKEN_KEY_LABEL).digest();
 }
 
 export function accessTokenKey(): Buffer {
-  return deriveAccessTokenKey(INSFORGE_CONFIG.clientSecret);
+  return deriveAccessTokenKey(YARAH_CONFIG.clientSecret);
 }
 
 /**
@@ -237,7 +237,7 @@ export function accessTokenKey(): Buffer {
  * token by thirty times, so it is the one whose key most needs to be unrelated
  * to the others: a refresh token is what an attacker would rather have.
  *
- * Note for whoever counts these next: rotating INSFORGE_CLIENT_SECRET now
+ * Note for whoever counts these next: rotating YARAH_CLIENT_SECRET now
  * invalidates FIVE things rather than four, and the refresh token is the one
  * that makes that rotation user-visible for longer — an access token dies in an
  * hour anyway, but a refresh token someone was relying on for a month dies with
@@ -247,13 +247,13 @@ const REFRESH_TOKEN_KEY_LABEL = 'mcp-refresh-token-v1';
 
 export function deriveRefreshTokenKey(clientSecret: string): Buffer {
   if (!clientSecret) {
-    throw new Error('INSFORGE_CLIENT_SECRET is required: the refresh token key is derived from it');
+    throw new Error('YARAH_CLIENT_SECRET is required: the refresh token key is derived from it');
   }
   return createHmac('sha256', clientSecret).update(REFRESH_TOKEN_KEY_LABEL).digest();
 }
 
 export function refreshTokenKey(): Buffer {
-  return deriveRefreshTokenKey(INSFORGE_CONFIG.clientSecret);
+  return deriveRefreshTokenKey(YARAH_CONFIG.clientSecret);
 }
 
 // ============================================================================
@@ -358,7 +358,7 @@ export const OAUTH_ENDPOINTS = {
   /** Authorization endpoint */
   authorize: '/oauth/authorize',
 
-  /** OAuth callback from Insforge */
+  /** OAuth callback from Yarah */
   callback: '/oauth/callback',
 
   /** Project selection page */
@@ -394,7 +394,7 @@ export const API_ENDPOINTS = {
  * Check if OAuth client credentials are configured
  */
 export function isOAuthConfigured(): boolean {
-  return !!(INSFORGE_CONFIG.clientId && INSFORGE_CONFIG.clientSecret);
+  return !!(YARAH_CONFIG.clientId && YARAH_CONFIG.clientSecret);
 }
 
 /**
@@ -403,7 +403,7 @@ export function isOAuthConfigured(): boolean {
 export function validateConfig(): void {
   if (!isOAuthConfigured()) {
     console.warn('[Config] WARNING: OAuth client credentials not configured.');
-    console.warn('[Config] Set INSFORGE_CLIENT_ID and INSFORGE_CLIENT_SECRET environment variables.');
+    console.warn('[Config] Set YARAH_CLIENT_ID and YARAH_CLIENT_SECRET environment variables.');
   }
 
   if (!isAnalyticsConfigured()) {

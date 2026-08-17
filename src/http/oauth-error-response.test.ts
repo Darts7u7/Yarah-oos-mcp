@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { humanFormOf, prefersHtml, reconnectCommand, sendOAuthError, PKCE_REQUIRED_PAGE } from './oauth-error-response.js';
 
-const MCP_URL = 'https://mcp.insforge.dev/mcp';
+const MCP_URL = 'https://mcp.yarah.dev/mcp';
 
 /** Just enough of express's Request for the Accept negotiation. */
 const asBrowser = { accepts: (types: string[]) => (types.includes('html') ? 'html' : false) };
@@ -59,18 +59,18 @@ describe('every browser-visible failure says what to do', () => {
 
   it('names the command that repairs a REMOTE client, not the local installer', () => {
     // These users arrived over the remote URL — that is the only way to reach
-    // this page at all, since this server serves it. `npx @insforge/install`
+    // this page at all, since this server serves it. `npx @yarahdev/install`
     // installs a local stdio server with an API key: a different product, not
     // a repair. This page said that until it was traced.
     for (const error of ['invalid_client', 'invalid_request']) {
       const action = humanFormOf({ error }, MCP_URL).action as string[];
       expect(action).toEqual([
-        'codex mcp logout insforge',
+        'codex mcp logout yarah',
         `npx add-mcp remove ${MCP_URL} -y`,
         `npx add-mcp remove ${MCP_URL} -g -y`,
-        'npx add-mcp https://mcp.insforge.dev/mcp',
+        'npx add-mcp https://mcp.yarah.dev/mcp',
       ]);
-      expect(action.join(' ')).not.toContain('@insforge/install');
+      expect(action.join(' ')).not.toContain('@yarahdev/install');
     }
   });
 
@@ -259,14 +259,14 @@ describe('every browser-visible failure says what to do', () => {
     // On the Manufact slug it must say the slug, or someone follows the
     // instruction and reconnects to the box we are migrating off.
     //
-    // Both commands, because the removal used to hardcode "insforge" while the
+    // Both commands, because the removal used to hardcode "yarah" while the
     // add step was host-derived: on the slug the removal then matched no
     // server at all and the repair silently did nothing. add-mcp matches
     // `server.identity === query` and identity is the URL for a remote entry,
     // so passing the URL is exact on every host.
     const slug = 'https://keen-pulse-fsjr9.run.mcp-use.com/mcp';
     expect(reconnectCommand(slug)).toEqual([
-      'codex mcp logout insforge',
+      'codex mcp logout yarah',
       `npx add-mcp remove ${slug} -y`,
       `npx add-mcp remove ${slug} -g -y`,
       `npx add-mcp ${slug}`,
@@ -275,7 +275,7 @@ describe('every browser-visible failure says what to do', () => {
     // server as that client stored it, which is our product name on any host.
     for (const command of reconnectCommand(slug).slice(1)) {
       expect(command).toContain('keen-pulse-fsjr9');
-      expect(command).not.toContain('insforge.dev');
+      expect(command).not.toContain('yarah.dev');
     }
   });
 

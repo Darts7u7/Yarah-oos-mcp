@@ -13,7 +13,7 @@ import { join } from 'path';
  * (not-our-token -> 200) return before the upstream call, and CI never touches
  * the platform.
  *
- * Iris proposed a live probe against api.insforge.dev. That verifies more than
+ * Iris proposed a live probe against api.yarah.dev. That verifies more than
  * this does — it confirms the constants are CORRECT, not merely consistent —
  * and it is worth having. But it couples CI to the platform being reachable,
  * which makes a green build depend on someone else's uptime. This is the half
@@ -22,11 +22,11 @@ import { join } from 'path';
  *   the platform has two path families, and every URL must come from the
  *   constant that names its family rather than from a hand-typed prefix.
  *
- * That is exactly the mistake that was made. `${INSFORGE_API_BASE}/oauth/...`
+ * That is exactly the mistake that was made. `${YARAH_API_BASE}/oauth/...`
  * type-checks, reads correctly, and is wrong.
  */
 
-const source = readFileSync(join(__dirname, 'insforge-api.ts'), 'utf8');
+const source = readFileSync(join(__dirname, 'yarah-api.ts'), 'utf8');
 
 /** Every template-literal URL passed to platformFetch. */
 function platformUrls(): string[] {
@@ -42,7 +42,7 @@ describe('platform URL construction', () => {
   });
 
   it('builds every OAuth URL from OAUTH_API_BASE, never by hand', () => {
-    // `${INSFORGE_API_BASE}/oauth/v1/revoke` is a 404 on the real platform.
+    // `${YARAH_API_BASE}/oauth/v1/revoke` is a 404 on the real platform.
     // It compiles, it reads correctly, and it is wrong.
     const handBuiltOAuth = platformUrls().filter(
       (u) => /oauth/i.test(u) && !u.startsWith('${OAUTH_API_BASE}')
@@ -50,11 +50,11 @@ describe('platform URL construction', () => {
     expect(handBuiltOAuth).toEqual([]);
   });
 
-  it('builds every non-OAuth URL from INSFORGE_API_BASE at the root', () => {
+  it('builds every non-OAuth URL from YARAH_API_BASE at the root', () => {
     // The other family: /auth/v1, /organizations/v1, /projects/v1 — all at the
     // root, and all 404 under /api. Measured, not assumed.
     const wrong = platformUrls().filter(
-      (u) => !/oauth/i.test(u) && !u.startsWith('${INSFORGE_API_BASE}/')
+      (u) => !/oauth/i.test(u) && !u.startsWith('${YARAH_API_BASE}/')
     );
     expect(wrong).toEqual([]);
   });
@@ -62,7 +62,7 @@ describe('platform URL construction', () => {
   it('never puts an /api prefix on a root-family URL', () => {
     // /api/auth/v1/profile is a 404. This is the inverse of the revoke bug and
     // just as invisible to a reader.
-    const prefixed = platformUrls().filter((u) => u.startsWith('${INSFORGE_API_BASE}/api/'));
+    const prefixed = platformUrls().filter((u) => u.startsWith('${YARAH_API_BASE}/api/'));
     expect(prefixed).toEqual([]);
   });
 

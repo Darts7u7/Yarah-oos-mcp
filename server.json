@@ -1,30 +1,30 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.InsForge/insforge-mcp",
-  "title": "InsForge",
-  "description": "MCP server for InsForge BaaS — database, storage, edge functions, and deployments",
-  "websiteUrl": "https://insforge.dev",
+  "name": "io.github.Darts7u7/Yarah-oos-mcp",
+  "title": "Yarah",
+  "description": "MCP server for Yarah BaaS — database, storage, edge functions, and deployments",
+  "websiteUrl": "https://yarah.dev",
   "icons": [
     {
-      "src": "https://github.com/InsForge.png",
+      "src": "https://github.com/Yarah.png",
       "mimeType": "image/png"
     }
   ],
   "repository": {
-    "url": "https://github.com/InsForge/insforge-mcp",
+    "url": "https://github.com/Darts7u7/Yarah-oos-mcp",
     "source": "github"
   },
   "version": "1.2.12",
   "remotes": [
     {
       "type": "streamable-http",
-      "url": "https://mcp.insforge.dev/mcp"
+      "url": "https://mcp.yarah.dev/mcp"
     }
   ],
   "packages": [
     {
       "registryType": "npm",
-      "identifier": "@insforge/mcp",
+      "identifier": "@yarahdev/mcp",
       "version": "1.2.12",
       "transport": {
         "type": "stdio"
@@ -32,13 +32,13 @@
       "environmentVariables": [
         {
           "name": "API_KEY",
-          "description": "InsForge project API key",
+          "description": "Yarah project API key",
           "isRequired": true,
           "isSecret": true
         },
         {
           "name": "API_BASE_URL",
-          "description": "InsForge backend URL (e.g. https://your-app.us-east.insforge.app)",
+          "description": "Yarah backend URL (e.g. https://your-app.us-east.apps.yarah.dev)",
           "isRequired": true
         }
       ]

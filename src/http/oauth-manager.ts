@@ -13,8 +13,8 @@ import {
   type ProjectAccess,
   type Organization,
   type Project,
-  InsforgeApiError,
-} from './insforge-api.js';
+  YarahApiError,
+} from './yarah-api.js';
 
 // ============================================================================
 // PKCE Helpers
@@ -47,7 +47,7 @@ export function generateState(): string {
  *
  * This stores both:
  * 1. The MCP client's original request parameters
- * 2. The PKCE verifier we generate when calling Insforge OAuth
+ * 2. The PKCE verifier we generate when calling Yarah OAuth
  */
 interface AuthorizationState {
   /**
@@ -69,8 +69,8 @@ interface AuthorizationState {
   codeChallenge?: string;  // From MCP client (if using PKCE)
   codeChallengeMethod?: string;
 
-  // Our PKCE verifier for calling Insforge OAuth
-  insforgeCodeVerifier: string;
+  // Our PKCE verifier for calling Yarah OAuth
+  yarahCodeVerifier: string;
 
   /**
    * The platform access token, present only AFTER the callback has exchanged
@@ -143,7 +143,7 @@ export class OAuthManager {
 
   /**
    * Create a new authorization state (step 1 of OAuth flow)
-   * Returns a state ID and the PKCE code challenge for Insforge OAuth
+   * Returns a state ID and the PKCE code challenge for Yarah OAuth
    */
   async createAuthorizationState(params: {
     redirectUri: string;
@@ -151,16 +151,16 @@ export class OAuthManager {
     state?: string;
     codeChallenge?: string;
     codeChallengeMethod?: string;
-  }): Promise<{ handle: string; sealedState: string; insforgeCodeChallenge: string }> {
+  }): Promise<{ handle: string; sealedState: string; yarahCodeChallenge: string }> {
     // Validate code_challenge_method early - only S256 is supported
     // Reject 'plain' and other methods to prevent downgrade attacks
     if (params.codeChallenge && params.codeChallengeMethod && params.codeChallengeMethod !== 'S256') {
       throw new Error(`Unsupported code_challenge_method: ${params.codeChallengeMethod}. Only S256 is supported.`);
     }
 
-    // Generate PKCE verifier for our request to Insforge
-    const insforgeCodeVerifier = generateCodeVerifier();
-    const insforgeCodeChallenge = generateCodeChallenge(insforgeCodeVerifier);
+    // Generate PKCE verifier for our request to Yarah
+    const yarahCodeVerifier = generateCodeVerifier();
+    const yarahCodeChallenge = generateCodeChallenge(yarahCodeVerifier);
 
     // Normalize codeChallengeMethod to S256 if code challenge is provided
     const handle = newStateHandle();
@@ -168,13 +168,13 @@ export class OAuthManager {
       ...params,
       handle,
       codeChallengeMethod: params.codeChallenge ? 'S256' : undefined,
-      insforgeCodeVerifier,
+      yarahCodeVerifier,
       createdAt: Date.now(),
     };
 
     // The handle goes to the platform (32 chars, comfortably inside its
     // 255-character column); the sealed record goes in a cookie on our origin.
-    return { handle, sealedState: sealAuthState(authState, authStateKey()), insforgeCodeChallenge };
+    return { handle, sealedState: sealAuthState(authState, authStateKey()), yarahCodeChallenge };
   }
 
   /**

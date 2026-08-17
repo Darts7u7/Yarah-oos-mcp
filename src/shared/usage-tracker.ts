@@ -1,16 +1,16 @@
 import fetch from 'node-fetch';
 
-const PLATFORM_API_BASE = 'https://api.insforge.dev';
+const PLATFORM_API_BASE = 'https://api.yarah.dev';
 
 /**
- * Parse app-key from an Insforge API base URL.
- * Valid format: https://{app-key}.{region}.insforge.app
+ * Parse app-key from an Yarah API base URL.
+ * Valid format: https://{app-key}.{region}.apps.yarah.dev
  * Returns the app-key or null if the URL doesn't match.
  */
 export function parseAppKey(apiBaseUrl: string): string | null {
   try {
     const url = new URL(apiBaseUrl);
-    const match = url.hostname.match(/^([^.]+)\.[^.]+\.insforge\.app$/);
+    const match = url.hostname.match(/^([^.]+)\.[^.]+\.apps\.yarah\.dev$/);
     return match ? match[1] : null;
   } catch {
     return null;

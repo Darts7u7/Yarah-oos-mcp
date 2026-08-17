@@ -6,16 +6,16 @@ const { mockFetch } = vi.hoisted(() => ({ mockFetch: vi.fn() }));
 vi.mock('node-fetch', () => ({ default: mockFetch }));
 
 describe('parseAppKey', () => {
-  it('should parse app-key from valid insforge.app URL', () => {
-    expect(parseAppKey('https://uhzx8md3.us-test.insforge.app')).toBe('uhzx8md3');
+  it('should parse app-key from valid.apps.yarah.dev URL', () => {
+    expect(parseAppKey('https://uhzx8md3.us-test.apps.yarah.dev')).toBe('uhzx8md3');
   });
 
   it('should parse app-key from different regions', () => {
-    expect(parseAppKey('https://4cp6qchj.us-east.insforge.app')).toBe('4cp6qchj');
+    expect(parseAppKey('https://4cp6qchj.us-east.apps.yarah.dev')).toBe('4cp6qchj');
   });
 
-  it('should return null for non-insforge.app domain', () => {
-    expect(parseAppKey('https://4cp6ast.insforge.dev')).toBeNull();
+  it('should return null for non.apps.yarah.dev domain', () => {
+    expect(parseAppKey('https://4cp6ast.yarah.dev')).toBeNull();
   });
 
   it('should return null for localhost', () => {
@@ -26,13 +26,13 @@ describe('parseAppKey', () => {
     expect(parseAppKey('not-a-url')).toBeNull();
   });
 
-  it('should return null for insforge.app without region segment', () => {
-    expect(parseAppKey('https://myapp.insforge.app')).toBeNull();
+  it('should return null for.apps.yarah.dev without region segment', () => {
+    expect(parseAppKey('https://myapp.apps.yarah.dev')).toBeNull();
   });
 
   it('should return null for too many subdomains', () => {
-    // hostname: a.b.c.insforge.app — the regex expects exactly {key}.{region}.insforge.app
-    expect(parseAppKey('https://a.b.c.insforge.app')).toBeNull();
+    // hostname: a.b.c.apps.yarah.dev — the regex expects exactly {key}.{region}.apps.yarah.dev
+    expect(parseAppKey('https://a.b.c.apps.yarah.dev')).toBeNull();
   });
 });
 
@@ -49,7 +49,7 @@ describe('UsageTracker', () => {
   });
 
   it('should send usage tracking request', async () => {
-    const tracker = new UsageTracker('https://myapp.us-east.insforge.app', 'test-key');
+    const tracker = new UsageTracker('https://myapp.us-east.apps.yarah.dev', 'test-key');
     await tracker.trackUsage('fetch-docs', true);
 
     // Should have called fetch twice: agent-connected + usage tracking
@@ -68,7 +68,7 @@ describe('UsageTracker', () => {
   describe('agent-connected reporting', () => {
     it('should report agent-connected with app_key in local mode', async () => {
       const tracker = new UsageTracker(
-        'https://uhzx8md3.us-test.insforge.app',
+        'https://uhzx8md3.us-test.apps.yarah.dev',
         'test-key',
         { isRemote: false }
       );
@@ -78,7 +78,7 @@ describe('UsageTracker', () => {
         (call: string[]) => call[0].includes('/tracking/v1/agent-connected')
       );
       expect(agentCall).toBeDefined();
-      expect(agentCall![0]).toBe('https://api.insforge.dev/tracking/v1/agent-connected');
+      expect(agentCall![0]).toBe('https://api.yarah.dev/tracking/v1/agent-connected');
 
       const body = JSON.parse(agentCall![1].body);
       expect(body.app_key).toBe('uhzx8md3');
@@ -91,7 +91,7 @@ describe('UsageTracker', () => {
 
     it('should report agent-connected with project_id in remote mode', async () => {
       const tracker = new UsageTracker(
-        'https://myapp.us-east.insforge.app',
+        'https://myapp.us-east.apps.yarah.dev',
         'test-key',
         { isRemote: true, projectId: '550e8400-e29b-41d4-a716-446655440000', accessToken: 'my-token' }
       );
@@ -111,7 +111,7 @@ describe('UsageTracker', () => {
 
     it('should fall back to app_key for legacy remote sessions', async () => {
       const tracker = new UsageTracker(
-        'https://4cp6qchj.us-east.insforge.app',
+        'https://4cp6qchj.us-east.apps.yarah.dev',
         'test-key',
         { isRemote: true, projectId: 'legacy', accessToken: 'legacy' }
       );
@@ -127,7 +127,7 @@ describe('UsageTracker', () => {
       expect(body.project_id).toBeUndefined();
     });
 
-    it('should not report agent-connected if apiBaseUrl is not a valid insforge.app URL (local mode)', async () => {
+    it('should not report agent-connected if apiBaseUrl is not a valid.apps.yarah.dev URL (local mode)', async () => {
       const tracker = new UsageTracker(
         'http://localhost:7130',
         'test-key',
@@ -143,7 +143,7 @@ describe('UsageTracker', () => {
 
     it('should only report agent-connected once across multiple trackUsage calls', async () => {
       const tracker = new UsageTracker(
-        'https://uhzx8md3.us-test.insforge.app',
+        'https://uhzx8md3.us-test.apps.yarah.dev',
         'test-key',
         { isRemote: false }
       );
@@ -167,7 +167,7 @@ describe('UsageTracker', () => {
       });
 
       const tracker = new UsageTracker(
-        'https://uhzx8md3.us-test.insforge.app',
+        'https://uhzx8md3.us-test.apps.yarah.dev',
         'test-key',
         { isRemote: false }
       );

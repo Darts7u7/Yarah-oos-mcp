@@ -1,14 +1,14 @@
 {
-  "name": "@insforge/mcp",
+  "name": "@yarahdev/mcp",
   "version": "1.2.12",
-  "description": "MCP (Model Context Protocol) server for Insforge backend-as-a-service",
-  "mcpName": "io.github.InsForge/insforge-mcp",
+  "description": "MCP (Model Context Protocol) server for Yarah backend-as-a-service",
+  "mcpName": "io.github.Darts7u7/Yarah-oos-mcp",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
     "mcp": "./dist/index.js",
-    "insforge-mcp": "./dist/index.js",
-    "insforge-mcp-server": "./dist/http-server.js"
+    "yarah-mcp": "./dist/index.js",
+    "yarah-mcp-server": "./dist/http-server.js"
   },
   "scripts": {
     "start": "node dist/http-server.js --host 0.0.0.0",
@@ -29,18 +29,18 @@
   "keywords": [
     "mcp",
     "model-context-protocol",
-    "insforge",
+    "yarah",
     "backend-as-a-service"
   ],
-  "author": "Insforge",
+  "author": "Yarah",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/InsForge/insforge-mcp.git"
+    "url": "https://github.com/Darts7u7/Yarah-oos-mcp.git"
   },
-  "homepage": "https://github.com/InsForge/insforge-mcp#readme",
+  "homepage": "https://github.com/Darts7u7/Yarah-oos-mcp#readme",
   "bugs": {
-    "url": "https://github.com/InsForge/insforge-mcp/issues"
+    "url": "https://github.com/Darts7u7/Yarah-oos-mcp/issues"
   },
   "files": [
     "dist",
@@ -48,7 +48,7 @@
     "server.json"
   ],
   "dependencies": {
-    "@insforge/shared-schemas": "1.1.49",
+    "@yarahdev/shared-schemas": "^1.2.1",
     "@modelcontextprotocol/sdk": "^1.27.1",
     "archiver": "^7.0.1",
     "commander": "^14.0.0",

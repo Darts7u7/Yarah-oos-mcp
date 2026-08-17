@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import fetch from 'node-fetch';
 import { handleApiResponse, formatSuccessMessage } from '../response-handler.js';
-import { CreateBucketRequest, createBucketRequestSchema } from '@insforge/shared-schemas';
+import { CreateBucketRequest, createBucketRequestSchema } from '@yarahdev/shared-schemas';
 import type { RegisterContext } from './types.js';
 
 export function registerStorageTools(ctx: RegisterContext): void {

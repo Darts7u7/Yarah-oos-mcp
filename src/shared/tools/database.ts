@@ -11,7 +11,7 @@ import {
   RawSQLRequest,
   rawSQLRequestSchema,
   bulkUpsertRequestSchema,
-} from '@insforge/shared-schemas';
+} from '@yarahdev/shared-schemas';
 import type { RegisterContext } from './types.js';
 import { shellEsc } from './utils.js';
 
@@ -180,10 +180,10 @@ export function registerDatabaseTools(ctx: RegisterContext): void {
     // Remote mode: fetch anon key and return npx command for agent to execute locally
     registerTool(
       'download-template',
-      'CRITICAL: MANDATORY FIRST STEP for all new InsForge projects. Fetches configuration and returns a command for you to run locally to scaffold a starter template.',
+      'CRITICAL: MANDATORY FIRST STEP for all new Yarah projects. Fetches configuration and returns a command for you to run locally to scaffold a starter template.',
       {
         frame: z.enum(['react', 'nextjs']).describe('Framework to use for the template (support React and Next.js)'),
-        projectName: z.string().optional().describe('Name for the project directory (optional, defaults to "insforge-{frame}")'),
+        projectName: z.string().optional().describe('Name for the project directory (optional, defaults to "yarah-{frame}")'),
       },
       withUsageTracking('download-template', async ({ frame, projectName }) => {
         try {
@@ -201,7 +201,7 @@ export function registerDatabaseTools(ctx: RegisterContext): void {
           }
           const anonKey = anonResult.accessToken;
 
-          const rawDir = projectName || `insforge-${frame}`;
+          const rawDir = projectName || `yarah-${frame}`;
 
           // Reject path traversal and shell-unsafe names (mirrors local mode validation)
           if (!rawDir || rawDir === '.' || rawDir === '..' || /[/\\]/.test(rawDir) || !/^[\w.-]+$/.test(rawDir)) {
@@ -212,7 +212,7 @@ export function registerDatabaseTools(ctx: RegisterContext): void {
           const instructions = `Template configuration ready. Please run the following command in your project's parent directory:
 
 \`\`\`bash
-npx create-insforge-app ${shellEsc(targetDir)} --frame ${frame} --base-url ${shellEsc(API_BASE_URL)} --anon-key ${shellEsc(anonKey)}
+npx create-yarah-app ${shellEsc(targetDir)} --frame ${frame} --base-url ${shellEsc(API_BASE_URL)} --anon-key ${shellEsc(anonKey)}
 \`\`\`
 
 After the command completes, \`cd ${shellEsc(targetDir)}\` and start developing.`;
@@ -233,10 +233,10 @@ After the command completes, \`cd ${shellEsc(targetDir)}\` and start developing.
     // Local mode: execute npx command directly
     registerTool(
       'download-template',
-      'CRITICAL: MANDATORY FIRST STEP for all new InsForge projects. Download pre-configured starter template to a temporary directory. After download, you MUST copy files to current directory using the provided command.',
+      'CRITICAL: MANDATORY FIRST STEP for all new Yarah projects. Download pre-configured starter template to a temporary directory. After download, you MUST copy files to current directory using the provided command.',
       {
         frame: z.enum(['react', 'nextjs']).describe('Framework to use for the template (support React and Next.js)'),
-        projectName: z.string().optional().describe('Name for the project directory (optional, defaults to "insforge-{frame}")'),
+        projectName: z.string().optional().describe('Name for the project directory (optional, defaults to "yarah-{frame}")'),
       },
       withUsageTracking('download-template', async ({ frame, projectName }) => {
         try {
@@ -254,7 +254,7 @@ After the command completes, \`cd ${shellEsc(targetDir)}\` and start developing.
           }
           const anonKey = anonResult.accessToken;
 
-          const rawDir = projectName || `insforge-${frame}`;
+          const rawDir = projectName || `yarah-${frame}`;
 
           // Reject path traversal and shell-unsafe names
           if (!rawDir || rawDir === '.' || rawDir === '..' || /[/\\]/.test(rawDir) || !/^[\w.-]+$/.test(rawDir)) {
@@ -264,7 +264,7 @@ After the command completes, \`cd ${shellEsc(targetDir)}\` and start developing.
           const targetDir = rawDir;
 
           // Create a unique workspace to avoid collisions across concurrent runs
-          const workspaceBase = await fs.mkdtemp(join(tmpdir(), 'insforge-template-'));
+          const workspaceBase = await fs.mkdtemp(join(tmpdir(), 'yarah-template-'));
           const templatePath = join(workspaceBase, targetDir);
 
           console.error(`[download-template] Target path: ${templatePath}`);
@@ -272,7 +272,7 @@ After the command completes, \`cd ${shellEsc(targetDir)}\` and start developing.
           // execFileAsync rejects on non-zero exit — no fragile stdout/stderr inspection needed
           await execFileAsync(
             'npx',
-            ['create-insforge-app', targetDir, '--frame', frame, '--base-url', API_BASE_URL, '--anon-key', anonKey, '--skip-install'],
+            ['create-yarah-app', targetDir, '--frame', frame, '--base-url', API_BASE_URL, '--anon-key', anonKey, '--skip-install'],
             { maxBuffer: 10 * 1024 * 1024, cwd: workspaceBase }
           );
 

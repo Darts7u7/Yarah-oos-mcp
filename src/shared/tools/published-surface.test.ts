@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { registerInsforgeTools } from './index.js';
+import { registerYarahTools } from './index.js';
 import type { ToolHost } from './host.js';
 
 /**
@@ -35,7 +35,7 @@ vi.mock('node-fetch', async () => {
         return {
           ok: true,
           status: 200,
-          json: async () => ({ status: 'ok', version: '99.99.99', service: 'insforge' }),
+          json: async () => ({ status: 'ok', version: '99.99.99', service: 'yarah' }),
         };
       }
       return actual.default(url, init);
@@ -44,7 +44,7 @@ vi.mock('node-fetch', async () => {
 });
 
 /**
- * The published tool surface as of @insforge/mcp 1.2.x.
+ * The published tool surface as of @yarahdev/mcp 1.2.x.
  *
  * Sorted so the diff on a change is readable. Do not edit this to make a test
  * pass — edit it because you decided to change the contract.
@@ -79,7 +79,7 @@ const SELF_HOSTED_TOOL_NAMES = [
  *                                        has uploaded from its own machine)
  *
  * Both are published surfaces. Someone writing a prompt against
- * mcp.insforge.dev and someone writing one against the npm binary are writing
+ * mcp.yarah.dev and someone writing one against the npm binary are writing
  * against different contracts, and both are contracts.
  */
 const REMOTE_TOOL_NAMES = [
@@ -112,7 +112,7 @@ async function registeredNames(extra?: Record<string, unknown>): Promise<string[
       names.push(name);
     },
   };
-  await registerInsforgeTools(host, {
+  await registerYarahTools(host, {
     apiKey: 'test-key',
     apiBaseUrl: 'http://localhost:7130',
     ...extra,

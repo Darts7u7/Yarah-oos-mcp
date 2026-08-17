@@ -30,7 +30,7 @@ function fakeRuntime(transportType: 'streamable' | 'sse' = 'streamable', ageOffs
     transportType,
     data: {
       apiKey: 'ik_x',
-      apiBaseUrl: 'https://p.insforge.app',
+      apiBaseUrl: 'https://p.apps.yarah.dev',
       projectId: 'proj_1',
       projectName: 'demo',
       userId: 'user_1',

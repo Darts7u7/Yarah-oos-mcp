@@ -1,13 +1,13 @@
 ---
-description: Insforge MCP Publishing Guide - Instructions for AI assistants on how to publish this package
+description: Yarah MCP Publishing Guide - Instructions for AI assistants on how to publish this package
 globs:
 alwaysApply: true
 ---
 
-# Insforge MCP Publishing Guide
+# Yarah MCP Publishing Guide
 
 ## Package Information
-- **Package Name**: `@insforge/mcp`
+- **Package Name**: `@yarahdev/mcp`
 - **Current Version**: Check `package.json`
 - **Registry**: npm (public)
 
@@ -24,7 +24,7 @@ npm run build
 npm publish --tag dev --access public
 ```
 
-**Result**: Team can install with `npm install -g @insforge/mcp@dev`
+**Result**: Team can install with `npm install -g @yarahdev/mcp@dev`
 
 ### 2. PRODUCTION Publishing (Stable Release)
 Use this when dev version is tested and ready for all users.
@@ -45,7 +45,7 @@ npm publish --access public
 git push && git push --tags
 ```
 
-**Result**: Everyone installs with `npm install -g @insforge/mcp`
+**Result**: Everyone installs with `npm install -g @yarahdev/mcp`
 
 ## Version Conventions
 
@@ -72,21 +72,21 @@ Think of tags like Git branches:
 **They coexist in the same package!**
 
 ```
-@insforge/mcp
+@yarahdev/mcp
 ├── latest → 1.1.2 (production)
 └── dev    → 1.1.3-dev.2 (testing)
 ```
 
 ## Integration with Installer
 
-The `@insforge/install` package has a `--dev` flag:
+The `@yarahdev/install` package has a `--dev` flag:
 
 ```bash
 # Install production version
-npx @insforge/install --client cursor --env API_KEY=key
+npx @yarahdev/install --client cursor --env API_KEY=key
 
 # Install dev version
-npx @insforge/install --client cursor --env API_KEY=key --dev
+npx @yarahdev/install --client cursor --env API_KEY=key --dev
 ```
 
 When you publish to `dev` tag, team members use `--dev` flag to test.
@@ -111,18 +111,18 @@ When you publish to `dev` tag, team members use `--dev` flag to test.
 
 ```bash
 # Check current published versions
-npm view @insforge/mcp versions
+npm view @yarahdev/mcp versions
 
 # Check what's on latest tag
-npm view @insforge/mcp@latest version
+npm view @yarahdev/mcp@latest version
 
 # Check what's on dev tag
-npm view @insforge/mcp@dev version
+npm view @yarahdev/mcp@dev version
 
 # Test local build before publishing
 npm run build
 npm link
-# Then test with: insforge-mcp --api_key test
+# Then test with: yarah-mcp --api_key test
 ```
 
 ## Troubleshooting
@@ -144,7 +144,7 @@ npm version 1.2.0-dev.1
 npm run build
 npm publish --tag dev --access public
 
-# Team tests with: npx @insforge/install --client cursor --env API_KEY=key --dev
+# Team tests with: npx @yarahdev/install --client cursor --env API_KEY=key --dev
 
 # Day 2: Fix bugs
 npm version 1.2.0-dev.2

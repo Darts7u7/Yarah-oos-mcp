@@ -34,7 +34,7 @@ export function renderProjectSelectionPage(options: ProjectSelectionPageOptions)
             <button type="submit" class="project-card">
               <div class="project-info">
                 <div class="project-name">${escapeHtml(project.name)}</div>
-                <div class="project-url">https://${escapeHtml(project.appkey)}.${escapeHtml(project.region)}.insforge.app</div>
+                <div class="project-url">https://${escapeHtml(project.appkey)}.${escapeHtml(project.region)}.apps.yarah.dev</div>
               </div>
               <span class="project-region">${escapeHtml(project.region)}</span>
               <span class="project-arrow">
@@ -50,14 +50,14 @@ export function renderProjectSelectionPage(options: ProjectSelectionPageOptions)
     : `
       <div class="no-projects">
         <p>No active projects found.</p>
-        <p>Please create a project in the InsForge dashboard first.</p>
+        <p>Please create a project in the Yarah dashboard first.</p>
       </div>
     `;
 
   return `<!DOCTYPE html>
 <html>
 <head>
-  <title>Select Project - InsForge MCP</title>
+  <title>Select Project - Yarah MCP</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -320,7 +320,7 @@ export function renderProjectSelectionPage(options: ProjectSelectionPageOptions)
 <body>
   <div class="container">
     <div class="logo">
-      <img alt="InsForge Logo" width="100" height="24" decoding="async" data-nimg="1" style="color:transparent" src="https://insforge.dev/assets/logos/logo_text.svg">
+      <img alt="Yarah Logo" width="100" height="24" decoding="async" data-nimg="1" style="color:transparent" src="https://yarah.dev/assets/logos/logo_text.svg">
     </div>
 
     <h1>Select a Project</h1>

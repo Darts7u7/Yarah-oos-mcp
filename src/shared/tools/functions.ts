@@ -7,7 +7,7 @@ import {
   updateFunctionRequestSchema,
   uploadFunctionRequestSchema,
   functionSchema,
-} from '@insforge/shared-schemas';
+} from '@yarahdev/shared-schemas';
 import type { RegisterContext } from './types.js';
 
 export function registerFunctionTools(ctx: RegisterContext): void {

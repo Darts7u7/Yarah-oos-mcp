@@ -11,14 +11,14 @@ import {
   createDeploymentResponseSchema,
   createDirectDeploymentResponseSchema,
   startDeploymentRequestSchema,
-} from '@insforge/shared-schemas';
+} from '@yarahdev/shared-schemas';
 import type {
   CreateDeploymentResponse,
   CreateDirectDeploymentResponse,
   DeploymentManifestFile,
   DeploymentManifestFileEntry,
   StartDeploymentRequest,
-} from '@insforge/shared-schemas';
+} from '@yarahdev/shared-schemas';
 import type { RegisterContext } from './types.js';
 import { shellEsc } from './utils.js';
 
@@ -31,7 +31,7 @@ const EXCLUDED_DEPLOYMENT_SEGMENTS = new Set([
   '.next',
   'dist',
   'build',
-  '.insforge',
+  '.yarah',
 ]);
 
 interface LocalDeploymentFile extends DeploymentManifestFileEntry {
@@ -47,9 +47,9 @@ class DirectDeploymentUnsupportedError extends Error {
   }
 }
 
-function isInsforgeCloudApiBaseUrl(apiBaseUrl: string): boolean {
+function isYarahCloudApiBaseUrl(apiBaseUrl: string): boolean {
   try {
-    return new URL(apiBaseUrl).hostname.endsWith('.insforge.app');
+    return new URL(apiBaseUrl).hostname.endsWith('.apps.yarah.dev');
   } catch {
     return false;
   }
@@ -123,7 +123,7 @@ function parseCreateDirectDeploymentResponse(obj: unknown): DirectDeploymentSess
 }
 
 function getDirectUploadConcurrency(): number {
-  const parsed = Number.parseInt(process.env.INSFORGE_DEPLOY_UPLOAD_CONCURRENCY ?? '', 10);
+  const parsed = Number.parseInt(process.env.YARAH_DEPLOY_UPLOAD_CONCURRENCY ?? '', 10);
   const requested =
     Number.isSafeInteger(parsed) && parsed > 0 ? parsed : DEFAULT_DIRECT_UPLOAD_CONCURRENCY;
   return Math.min(requested, MAX_DIRECT_UPLOAD_CONCURRENCY);
@@ -315,21 +315,21 @@ function buildRemoteDirectUploadInstructions(
 
   return `Direct deployment upload is available for this backend.
 
-Please execute the following command locally from a shell that has INSFORGE_API_KEY set, then call the \`start-deployment\` tool with the deployment ID printed by the script. Set \`INSFORGE_DEPLOY_UPLOAD_CONCURRENCY\` if you want to tune parallel uploads; the default is 8 and the maximum is 32.
+Please execute the following command locally from a shell that has YARAH_API_KEY set, then call the \`start-deployment\` tool with the deployment ID printed by the script. Set \`YARAH_DEPLOY_UPLOAD_CONCURRENCY\` if you want to tune parallel uploads; the default is 8 and the maximum is 32.
 
 \`\`\`bash
 cd ${escapedDir}
-INSFORGE_API_KEY="\${INSFORGE_API_KEY:?Set INSFORGE_API_KEY to your InsForge API key}" node --input-type=module <<'NODE'
+YARAH_API_KEY="\${YARAH_API_KEY:?Set YARAH_API_KEY to your Yarah API key}" node --input-type=module <<'NODE'
 const { createHash } = await import('node:crypto');
 const { createReadStream } = await import('node:fs');
 const fs = await import('node:fs/promises');
 const path = await import('node:path');
 
 const API_BASE_URL = ${apiBaseUrlJson};
-const API_KEY = process.env.INSFORGE_API_KEY;
+const API_KEY = process.env.YARAH_API_KEY;
 const DEFAULT_UPLOAD_CONCURRENCY = 8;
 const MAX_UPLOAD_CONCURRENCY = 32;
-const EXCLUDED_SEGMENTS = new Set(['node_modules', '.git', '.next', 'dist', 'build', '.insforge']);
+const EXCLUDED_SEGMENTS = new Set(['node_modules', '.git', '.next', 'dist', 'build', '.yarah']);
 
 function shouldExcludeDeploymentPath(normalizedName) {
   const segments = normalizedName.split('/');
@@ -365,7 +365,7 @@ async function api(pathname, init = {}) {
 }
 
 function getUploadConcurrency() {
-  const parsed = Number.parseInt(process.env.INSFORGE_DEPLOY_UPLOAD_CONCURRENCY || '', 10);
+  const parsed = Number.parseInt(process.env.YARAH_DEPLOY_UPLOAD_CONCURRENCY || '', 10);
   const requested = Number.isSafeInteger(parsed) && parsed > 0 ? parsed : DEFAULT_UPLOAD_CONCURRENCY;
   return Math.min(requested, MAX_UPLOAD_CONCURRENCY);
 }
@@ -510,7 +510,7 @@ export function registerDeploymentTools(ctx: RegisterContext): void {
         .optional()
         .describe('API key for authentication (optional if provided via --api_key)'),
       source: z
-        .enum(['insforge.logs', 'postgREST.logs', 'postgres.logs', 'function.logs'])
+        .enum(['yarah.logs', 'postgREST.logs', 'postgres.logs', 'function.logs'])
         .describe('Log source to retrieve'),
       limit: z.number().optional().default(20).describe('Number of logs to return (default: 20)'),
     },
@@ -609,7 +609,7 @@ export function registerDeploymentTools(ctx: RegisterContext): void {
             .join(' \\\n  ');
 
           const escapedDir = esc(sourceDirectory);
-          const tmpZip = `/tmp/insforge-deploy-${deploymentId}.zip`;
+          const tmpZip = `/tmp/yarah-deploy-${deploymentId}.zip`;
 
           const instructions = `Deployment prepared successfully. Deployment ID: ${deploymentId}
 
@@ -618,7 +618,7 @@ Please execute the following commands locally, then call the \`start-deployment\
 ## Step 1: Zip the source directory
 \`\`\`bash
 cd ${escapedDir} && zip -r ${tmpZip} . \
-  -x "node_modules/*" ".git/*" ".next/*" ".env*" "dist/*" "build/*" ".insforge/*" ".DS_Store" "*.log"
+  -x "node_modules/*" ".git/*" ".next/*" ".env*" "dist/*" "build/*" ".yarah/*" ".DS_Store" "*.log"
 \`\`\`
 
 ## Step 2: Upload the zip file
@@ -630,7 +630,7 @@ curl -X POST ${esc(uploadUrl)} \
 
 ## Step 3: Clean up
 \`\`\`bash
-rm /tmp/insforge-deploy-${deploymentId}.zip
+rm /tmp/yarah-deploy-${deploymentId}.zip
 \`\`\`
 
 ## Step 4: Trigger the build
@@ -689,9 +689,9 @@ Run each step in order. If any step fails, do not proceed to the next step.`;
                     formatSuccessMessage('Deployment started', startResult) +
                     `\n\n${
                       supportsDirectDeployment
-                        ? isInsforgeCloudApiBaseUrl(API_BASE_URL)
+                        ? isYarahCloudApiBaseUrl(API_BASE_URL)
                           ? 'Note: You can check deployment status by querying the deployments.runs table.'
-                          : 'Note: For self-hosted direct deployments, check the result in your Vercel dashboard instead of InsForge deployment logs.'
+                          : 'Note: For self-hosted direct deployments, check the result in your Vercel dashboard instead of Yarah deployment logs.'
                         : 'Note: You can check deployment status by querying the deployments.runs table.'
                     }`,
                 },
@@ -781,9 +781,9 @@ Run each step in order. If any step fails, do not proceed to the next step.`;
                       text:
                         formatSuccessMessage('Deployment started', startResult) +
                         `\n\n${uploadSummary}\n\n${
-                          isInsforgeCloudApiBaseUrl(API_BASE_URL)
+                          isYarahCloudApiBaseUrl(API_BASE_URL)
                             ? 'Note: You can check deployment status by querying the deployments.runs table. If file uploads are interrupted, inspect deployments.files with the raw SQL tool to see which files are already uploaded before retrying missing files.'
-                            : 'Note: For self-hosted direct deployments, check the result in your Vercel dashboard instead of InsForge deployment logs. If file uploads are interrupted, inspect deployments.files with the raw SQL tool to see which files are already uploaded before retrying missing files.'
+                            : 'Note: For self-hosted direct deployments, check the result in your Vercel dashboard instead of Yarah deployment logs. If file uploads are interrupted, inspect deployments.files with the raw SQL tool to see which files are already uploaded before retrying missing files.'
                         }`,
                     },
                   ],
@@ -812,7 +812,7 @@ Run each step in order. If any step fails, do not proceed to the next step.`;
 
             // Write the legacy zip to a temp file so we know the size before uploading
             // (S3 presigned POSTs require Content-Length; streaming without it fails)
-            const tmpZipPath = join(tmpdir(), `insforge-deploy-${deploymentId}.zip`);
+            const tmpZipPath = join(tmpdir(), `yarah-deploy-${deploymentId}.zip`);
 
             try {
               await new Promise<void>((resolve, reject) => {

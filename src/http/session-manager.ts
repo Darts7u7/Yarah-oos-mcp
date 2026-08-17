@@ -3,7 +3,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import { SESSION_SWEEP_MS } from './config.js';
-import { registerInsforgeTools } from '../shared/tools/index.js';
+import { registerYarahTools } from '../shared/tools/index.js';
 import { sdkToolHost } from '../shared/tools/host.js';
 import { PACKAGE_VERSION } from '../shared/version.js';
 
@@ -305,11 +305,11 @@ export class SessionManager {
 
     // Create MCP server and register tools first
     const server = new McpServer({
-      name: 'insforge-mcp',
+      name: 'yarah-mcp',
       version: PACKAGE_VERSION,
     });
 
-    const toolsConfig = await registerInsforgeTools(sdkToolHost(server), {
+    const toolsConfig = await registerYarahTools(sdkToolHost(server), {
       apiKey: sessionData.apiKey,
       apiBaseUrl: sessionData.apiBaseUrl,
       mode: 'remote',
@@ -411,11 +411,11 @@ export class SessionManager {
 
     // Create MCP server and register tools first
     const server = new McpServer({
-      name: 'insforge-mcp',
+      name: 'yarah-mcp',
       version: PACKAGE_VERSION,
     });
 
-    const toolsConfig = await registerInsforgeTools(sdkToolHost(server), {
+    const toolsConfig = await registerYarahTools(sdkToolHost(server), {
       apiKey: sessionData.apiKey,
       apiBaseUrl: sessionData.apiBaseUrl,
       mode: 'remote',

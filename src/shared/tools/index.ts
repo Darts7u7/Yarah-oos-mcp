@@ -150,7 +150,7 @@ async function fetchBackendVersion(apiBaseUrl: string): Promise<string> {
 }
 
 /**
- * Register all Insforge tools on an MCP server.
+ * Register all Yarah tools on an MCP server.
  * Tools are split by domain into separate modules; this function
  * sets up the shared context and delegates to each domain registrar.
  *
@@ -158,7 +158,7 @@ async function fetchBackendVersion(apiBaseUrl: string): Promise<string> {
  * independent of which server implementation is underneath. Wrap an SDK
  * server with sdkToolHost().
  */
-export async function registerInsforgeTools(host: ToolHost, config: ToolsConfig = {}) {
+export async function registerYarahTools(host: ToolHost, config: ToolsConfig = {}) {
   const GLOBAL_API_KEY = config.apiKey || process.env.API_KEY || '';
   const API_BASE_URL = config.apiBaseUrl || process.env.API_BASE_URL || 'http://localhost:7130';
   const isRemote = config.mode === 'remote';
@@ -268,12 +268,12 @@ export async function registerInsforgeTools(host: ToolHost, config: ToolsConfig 
           if (result && typeof result === 'object' && 'content' in result) {
             response.content.push({
               type: 'text' as const,
-              text: `\n\n---\n🔧 INSFORGE DEVELOPMENT RULES (Auto-loaded):\n${result.content}`,
+              text: `\n\n---\n🔧 YARAH DEVELOPMENT RULES (Auto-loaded):\n${result.content}`,
             });
           }
         }
       } catch (error) {
-        console.error('Failed to fetch insforge-instructions.md:', error);
+        console.error('Failed to fetch yarah-instructions.md:', error);
       }
     }
 

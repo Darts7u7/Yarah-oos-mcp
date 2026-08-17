@@ -13,7 +13,7 @@ const STATE = {
   state: 'client-csrf-value',
   codeChallenge: 'a'.repeat(43),
   codeChallengeMethod: 'S256',
-  insforgeCodeVerifier: 'v'.repeat(43),
+  yarahCodeVerifier: 'v'.repeat(43),
   createdAt: 1785480000000,
 };
 
@@ -43,8 +43,8 @@ describe('the PKCE verifier is not readable from the sealed value', () => {
     const decoded = Buffer.from(body, 'base64url').toString('binary');
 
     for (const haystack of [sealed, decoded]) {
-      expect(haystack).not.toContain(STATE.insforgeCodeVerifier);
-      expect(haystack).not.toContain('insforgeCodeVerifier');
+      expect(haystack).not.toContain(STATE.yarahCodeVerifier);
+      expect(haystack).not.toContain('yarahCodeVerifier');
     }
     // ...nor the client's own redirect, which would make the blob a target list.
     expect(sealed).not.toContain('127.0.0.1');

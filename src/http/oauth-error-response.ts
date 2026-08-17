@@ -46,11 +46,11 @@ export interface HumanForm {
 /**
  * The command that actually repairs one of these users.
  *
- * NOT `npx @insforge/install`, which is what this page said until Max traced
+ * NOT `npx @yarahdev/install`, which is what this page said until Max traced
  * where the connected clients came from. There are two install paths and they
  * produce different products:
  *
- *   npx @insforge/install   installs @insforge/mcp as a LOCAL stdio server with
+ *   npx @yarahdev/install   installs @yarahdev/mcp as a LOCAL stdio server with
  *                           an API key. Never contacts this server at all.
  *   npx add-mcp <url>       adds the REMOTE server — server.json remotes[], and
  *                           what the setup docs tell people to run.
@@ -89,7 +89,7 @@ export interface HumanForm {
  * and it is client-specific:
  *
  *   Claude Code   /mcp -> pick the server -> Clear authentication   (a UI action)
- *   Codex         codex mcp logout insforge
+ *   Codex         codex mcp logout yarah
  *
  * The Claude Code one is not a command, so it belongs in the sentence rather
  * than in a code block a person would try to paste. On a NEW hostname the
@@ -124,10 +124,10 @@ export interface HumanForm {
  */
 export function reconnectCommand(mcpUrl: string): string[] {
   // Remove BY URL, not by name. The name is derived from the hostname, so a
-  // hardcoded "insforge" matches nothing on any host that infers a different
+  // hardcoded "yarah" matches nothing on any host that infers a different
   // key — including the Manufact slug we spent a day testing on:
   //
-  //   mcp.insforge.dev                   -> key "insforge"
+  //   mcp.yarah.dev                   -> key "yarah"
   //   keen-pulse-fsjr9.run.mcp-use.com   -> key "keen-pulse-fsjr9"
   //
   // I made the ADD step host-derived and left the REMOVE step hardcoded, which
@@ -163,7 +163,7 @@ export function reconnectCommand(mcpUrl: string): string[] {
   // missed. The honest repair is both, and it is harmless to run either one
   // when that scope holds nothing — add-mcp reports zero removed and exits 0.
   return [
-    'codex mcp logout insforge',
+    'codex mcp logout yarah',
     `npx add-mcp remove ${mcpUrl} -y`,
     `npx add-mcp remove ${mcpUrl} -g -y`,
     `npx add-mcp ${mcpUrl}`,
@@ -218,7 +218,7 @@ export function reconnectCommand(mcpUrl: string): string[] {
 const CLEARING_INSTRUCTION =
   'In Claude Code: run /mcp, pick this server, and choose Clear authentication. In Codex: run ' +
   'the first command below. Then reconnect with the last one. Run the commands from the project ' +
-  'directory where you use InsForge — one of them only looks there.';
+  'directory where you use Yarah — one of them only looks there.';
 
 /**
  * Terminate a sentence we did not write before another one follows it.

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, vi } from 'vitest';
-import { registerInsforgeTools } from './index.js';
+import { registerYarahTools } from './index.js';
 import { sdkToolHost } from './host.js';
 
 vi.mock('node-fetch', async () => {
@@ -11,7 +11,7 @@ vi.mock('node-fetch', async () => {
         return {
           ok: true,
           status: 200,
-          json: async () => ({ status: 'ok', version: '99.99.99', service: 'insforge' }),
+          json: async () => ({ status: 'ok', version: '99.99.99', service: 'yarah' }),
         };
       }
       return actual.default(url, init);
@@ -61,7 +61,7 @@ describe('MCP Integrated Testing Bridge', () => {
 
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await registerInsforgeTools(sdkToolHost(mockServer as any), {
+      await registerYarahTools(sdkToolHost(mockServer as any), {
         apiKey,
         apiBaseUrl,
         mode: 'local'

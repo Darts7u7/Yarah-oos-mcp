@@ -4,9 +4,9 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { z } from 'zod';
 import { sdkToolHost, type ToolHost } from './host.js';
-import { registerInsforgeTools } from './index.js';
+import { registerYarahTools } from './index.js';
 
-// registerInsforgeTools refuses to start unless it can read the backend version,
+// registerYarahTools refuses to start unless it can read the backend version,
 // so every case below decides which version /api/health reports.
 let backendVersion = '99.99.99';
 
@@ -20,7 +20,7 @@ vi.mock('node-fetch', async () => {
         return {
           ok: true,
           status: 200,
-          json: async () => ({ status: 'ok', version: backendVersion, service: 'insforge' }),
+          json: async () => ({ status: 'ok', version: backendVersion, service: 'yarah' }),
         };
       }
       return actual.default(url, init);
@@ -81,12 +81,12 @@ describe('sdkToolHost', () => {
   });
 });
 
-describe('registerInsforgeTools through a ToolHost', () => {
+describe('registerYarahTools through a ToolHost', () => {
   it('hands every tool over as (name, description, schema, handler)', async () => {
     backendVersion = '99.99.99';
     const { host, calls } = recordingHost();
 
-    const result = await registerInsforgeTools(host, {
+    const result = await registerYarahTools(host, {
       apiKey: 'test-key',
       apiBaseUrl: 'http://localhost:7130',
     });
@@ -111,9 +111,9 @@ describe('registerInsforgeTools through a ToolHost', () => {
 
   it('registers the full surface onto a real SDK server', async () => {
     backendVersion = '99.99.99';
-    const server = new McpServer({ name: 'insforge-mcp', version: 'test' });
+    const server = new McpServer({ name: 'yarah-mcp', version: 'test' });
 
-    const result = await registerInsforgeTools(sdkToolHost(server), {
+    const result = await registerYarahTools(sdkToolHost(server), {
       apiKey: 'test-key',
       apiBaseUrl: 'http://localhost:7130',
     });
@@ -138,7 +138,7 @@ describe('registerInsforgeTools through a ToolHost', () => {
     backendVersion = '1.4.6'; // one below create-deployment's 1.4.7 minimum
     const { host, calls } = recordingHost();
 
-    await registerInsforgeTools(host, {
+    await registerYarahTools(host, {
       apiKey: 'test-key',
       apiBaseUrl: 'http://localhost:7130',
     });
@@ -153,12 +153,12 @@ describe('registerInsforgeTools through a ToolHost', () => {
     const local = recordingHost();
     const remote = recordingHost();
 
-    await registerInsforgeTools(local.host, {
+    await registerYarahTools(local.host, {
       apiKey: 'test-key',
       apiBaseUrl: 'http://localhost:7130',
       mode: 'local',
     });
-    await registerInsforgeTools(remote.host, {
+    await registerYarahTools(remote.host, {
       apiKey: 'test-key',
       apiBaseUrl: 'http://localhost:7130',
       mode: 'remote',

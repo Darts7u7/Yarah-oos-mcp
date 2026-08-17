@@ -33,18 +33,18 @@ describe('cookie attributes', () => {
     // Lax sends cookies on exactly that; Strict does not — a Strict cookie
     // would be invisible at the one moment it is needed and every sign-in
     // would fail. This assertion exists to stop a later "hardening".
-    expect(cookieAttributes('https://mcp.insforge.dev').sameSite).toBe('lax');
+    expect(cookieAttributes('https://mcp.yarah.dev').sameSite).toBe('lax');
   });
 
   it('is HttpOnly', () => {
-    expect(cookieAttributes('https://mcp.insforge.dev').httpOnly).toBe(true);
+    expect(cookieAttributes('https://mcp.yarah.dev').httpOnly).toBe(true);
   });
 
   it('follows the public URL for Secure rather than hardcoding it', () => {
     // A Secure cookie is silently dropped on plaintext http, and local runs are
     // http://127.0.0.1 — hardcoding true makes every local sign-in fail in a
     // way that looks like a code bug.
-    expect(cookieAttributes('https://mcp.insforge.dev').secure).toBe(true);
+    expect(cookieAttributes('https://mcp.yarah.dev').secure).toBe(true);
     expect(cookieAttributes('http://127.0.0.1:3000').secure).toBe(false);
   });
 });
@@ -70,7 +70,7 @@ describe('the cookie name a co-tenant cannot set', () => {
   it('takes Path=/ , which __Host- requires and which costs nothing', () => {
     // A cookie path was never a security boundary: any path on a host can read
     // or set that host's cookies. The prefix buys a guarantee the path did not.
-    expect(cookieAttributes('https://mcp.insforge.dev').path).toBe('/');
+    expect(cookieAttributes('https://mcp.yarah.dev').path).toBe('/');
   });
 });
 

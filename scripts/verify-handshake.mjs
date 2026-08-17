@@ -3,7 +3,7 @@
  * Drives a REAL MCP client through the REAL OAuth flow against a deployment,
  * and calls a real tool at the end.
  *
- *   node scripts/verify-handshake.mjs https://mcp.insforge.dev
+ *   node scripts/verify-handshake.mjs https://mcp.yarah.dev
  *
  * verify-deploy.mjs checks that the discovery documents are right. This checks
  * the thing they exist for: that a client can actually connect, log in, and
@@ -23,7 +23,7 @@ import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/
 
 const target = (process.argv[2] || '').replace(/\/$/, '');
 if (!target) {
-  console.error('usage: verify-handshake.mjs <base-url>   e.g. https://mcp.insforge.dev');
+  console.error('usage: verify-handshake.mjs <base-url>   e.g. https://mcp.yarah.dev');
   process.exit(2);
 }
 
@@ -100,7 +100,7 @@ const provider = {
   },
   get clientMetadata() {
     return {
-      client_name: 'insforge-mcp handshake check',
+      client_name: 'yarah-mcp handshake check',
       redirect_uris: [CALLBACK_URL],
       grant_types: ['authorization_code'],
       response_types: ['code'],
@@ -134,7 +134,7 @@ const fail = (error) => {
 
 const run = async () => {
   mark('discovery + registration', `against ${target}`);
-  let client = new Client({ name: 'insforge-handshake', version: '1.0.0' }, { capabilities: {} });
+  let client = new Client({ name: 'yarah-handshake', version: '1.0.0' }, { capabilities: {} });
   const url = new URL(`${target}/mcp`);
 
   let transport = new StreamableHTTPClientTransport(url, { authProvider: provider });
@@ -180,7 +180,7 @@ const run = async () => {
     // exercised without real credentials, so it went unnoticed until review.
     await transport.close().catch(() => {});
     await client.close().catch(() => {});
-    client = new Client({ name: 'insforge-handshake', version: '1.0.0' }, { capabilities: {} });
+    client = new Client({ name: 'yarah-handshake', version: '1.0.0' }, { capabilities: {} });
     transport = new StreamableHTTPClientTransport(url, { authProvider: provider });
     try {
       await client.connect(transport);

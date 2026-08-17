@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { InsforgeApiError } from './insforge-api.js';
+import { YarahApiError } from './yarah-api.js';
 import { statusForHttpError, isAuthorizationRefusal, isUpstreamUnavailable } from './error-status.js';
 
 describe('statusForHttpError', () => {
   it.each([400, 401, 403, 404, 409, 429])(
     'preserves an upstream %i client error',
     (status) => {
-      expect(statusForHttpError(new InsforgeApiError('upstream rejected request', status)))
+      expect(statusForHttpError(new YarahApiError('upstream rejected request', status)))
         .toBe(status);
     }
   );
@@ -31,23 +31,23 @@ describe('isAuthorizationRefusal', () => {
    */
 
   it('is a refusal for 401 and 403 — the platform looked and said no', () => {
-    expect(isAuthorizationRefusal(new InsforgeApiError('nope', 401))).toBe(true);
-    expect(isAuthorizationRefusal(new InsforgeApiError('nope', 403))).toBe(true);
+    expect(isAuthorizationRefusal(new YarahApiError('nope', 401))).toBe(true);
+    expect(isAuthorizationRefusal(new YarahApiError('nope', 403))).toBe(true);
   });
 
   it('is NOT a refusal for 5xx — that is absence of an answer', () => {
     // The case that made this function necessary. Treating it as a refusal
     // tells a user their sign-in died and sends them to a browser to fix a
     // platform blip that would have cleared on retry.
-    expect(isAuthorizationRefusal(new InsforgeApiError('boom', 500))).toBe(false);
-    expect(isAuthorizationRefusal(new InsforgeApiError('gateway', 502))).toBe(false);
-    expect(isAuthorizationRefusal(new InsforgeApiError('down', 503))).toBe(false);
+    expect(isAuthorizationRefusal(new YarahApiError('boom', 500))).toBe(false);
+    expect(isAuthorizationRefusal(new YarahApiError('gateway', 502))).toBe(false);
+    expect(isAuthorizationRefusal(new YarahApiError('down', 503))).toBe(false);
   });
 
   it('is NOT a refusal for 429, which sits in the 4xx range and is retryable', () => {
     // The one a careless `>= 400 && < 500` test would swallow. Rate limiting is
     // the platform declining to answer right now — precisely the retry case.
-    expect(isAuthorizationRefusal(new InsforgeApiError('slow down', 429))).toBe(false);
+    expect(isAuthorizationRefusal(new YarahApiError('slow down', 429))).toBe(false);
   });
 
   it('is NOT a refusal for a network error, a timeout, or anything unrecognised', () => {
@@ -78,19 +78,19 @@ describe('statusForHttpError and the retryable class', () => {
   });
 
   it('answers 503 when the platform answered 5xx or 429', () => {
-    expect(statusForHttpError(new InsforgeApiError('boom', 500))).toBe(503);
-    expect(statusForHttpError(new InsforgeApiError('gateway', 502))).toBe(503);
+    expect(statusForHttpError(new YarahApiError('boom', 500))).toBe(503);
+    expect(statusForHttpError(new YarahApiError('gateway', 502))).toBe(503);
     // 429 passes through instead: more precise than "unavailable", and a
     // deliberate earlier decision the ordering in statusForHttpError preserves.
-    expect(statusForHttpError(new InsforgeApiError('slow down', 429))).toBe(429);
+    expect(statusForHttpError(new YarahApiError('slow down', 429))).toBe(429);
   });
 
   it('still passes through the platform saying no', () => {
     // It looked and refused. Retrying does not help and the caller must not be
     // told it might.
-    expect(statusForHttpError(new InsforgeApiError('nope', 401))).toBe(401);
-    expect(statusForHttpError(new InsforgeApiError('nope', 403))).toBe(403);
-    expect(statusForHttpError(new InsforgeApiError('gone', 404))).toBe(404);
+    expect(statusForHttpError(new YarahApiError('nope', 401))).toBe(401);
+    expect(statusForHttpError(new YarahApiError('nope', 403))).toBe(403);
+    expect(statusForHttpError(new YarahApiError('gone', 404))).toBe(404);
   });
 
   it('keeps 500 for a failure we cannot attribute upstream', () => {
@@ -103,7 +103,7 @@ describe('statusForHttpError and the retryable class', () => {
 
   it('does not confuse a refusal with an unavailability', () => {
     // The two classifiers must disagree on exactly the cases they are for.
-    const refused = new InsforgeApiError('nope', 403);
+    const refused = new YarahApiError('nope', 403);
     const stalled = Object.assign(new Error('t'), { name: 'AbortError' });
     expect(isAuthorizationRefusal(refused)).toBe(true);
     expect(isUpstreamUnavailable(refused)).toBe(false);

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import { registerInsforgeTools } from './index.js';
+import { registerYarahTools } from './index.js';
 import { sdkToolHost } from './host.js';
 
 /**
@@ -74,7 +74,7 @@ async function toolsFor(mode: 'remote' | undefined) {
     },
   };
 
-  await registerInsforgeTools(spy, {
+  await registerYarahTools(spy, {
     apiKey: SESSION_KEY,
     apiBaseUrl: 'https://project.example.com',
     mode,

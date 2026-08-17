@@ -6,12 +6,12 @@ describe('renderOAuthErrorPage', () => {
     const html = renderOAuthErrorPage({
       heading: 'Set this up again',
       message: 'The app is not registered any more.',
-      action: 'npx @insforge/install',
+      action: 'npx @yarahdev/install',
     });
 
     expect(html).toContain('<h1>Set this up again</h1>');
     expect(html).toContain('The app is not registered any more.');
-    expect(html).toContain('<code>npx @insforge/install</code>');
+    expect(html).toContain('<code>npx @yarahdev/install</code>');
     expect(html.startsWith('<!DOCTYPE html>')).toBe(true);
   });
 

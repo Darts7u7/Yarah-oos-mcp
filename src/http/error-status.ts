@@ -1,7 +1,7 @@
-import { InsforgeApiError } from './insforge-api.js';
+import { YarahApiError } from './yarah-api.js';
 
 /**
- * Preserve client-error statuses returned by the InsForge API.
+ * Preserve client-error statuses returned by the Yarah API.
  *
  * Treat upstream 5xx responses and non-HTTP failures as server errors: those
  * are failures on our side of the MCP client's request and may be retryable.
@@ -27,7 +27,7 @@ import { InsforgeApiError } from './insforge-api.js';
  */
 export function isAuthorizationRefusal(error: unknown): boolean {
   return (
-    error instanceof InsforgeApiError && (error.statusCode === 401 || error.statusCode === 403)
+    error instanceof YarahApiError && (error.statusCode === 401 || error.statusCode === 403)
   );
 }
 
@@ -44,7 +44,7 @@ export function isAuthorizationRefusal(error: unknown): boolean {
  * temporary would tell a client to keep hammering a broken server.
  */
 export function isUpstreamUnavailable(error: unknown): boolean {
-  if (error instanceof InsforgeApiError) {
+  if (error instanceof YarahApiError) {
     return error.statusCode >= 500 || error.statusCode === 429;
   }
   // AbortSignal.timeout aborts with an AbortError; older paths and undici use
@@ -83,7 +83,7 @@ export function statusForHttpError(error: unknown): number {
   // check below — but "rate limited" is more precise than "unavailable" and a
   // caller can act on it differently. An earlier decision, deliberately kept.
   if (
-    error instanceof InsforgeApiError &&
+    error instanceof YarahApiError &&
     error.statusCode >= 400 &&
     error.statusCode < 500
   ) {

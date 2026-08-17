@@ -88,7 +88,7 @@ describe('the access token', () => {
 
   it('is null under a different key, so rotation signs everyone out', () => {
     // The stated and only revocation mechanism for the sealed values: rotating
-    // INSFORGE_CLIENT_SECRET. Worth a test because it is also the operational
+    // YARAH_CLIENT_SECRET. Worth a test because it is also the operational
     // cost Max flagged — client ids, auth states and access tokens all die at
     // once.
     const token = issueAccessToken(payload, key, T0);

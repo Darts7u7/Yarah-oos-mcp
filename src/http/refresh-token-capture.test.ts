@@ -14,7 +14,7 @@ import { describe, it, expect, beforeAll } from 'vitest';
  * trusting one end-to-end run that nobody can perform without a real account.
  */
 
-process.env.INSFORGE_CLIENT_SECRET ||= 'test-secret-for-refresh-capture';
+process.env.YARAH_CLIENT_SECRET ||= 'test-secret-for-refresh-capture';
 
 let manager: import('./oauth-manager.js').OAuthManager;
 let openAuthState: typeof import('./auth-state.js').openAuthState;

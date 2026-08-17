@@ -1,15 +1,15 @@
 import fetch from 'node-fetch';
 
 /**
- * Insforge Cloud Platform API Client
+ * Yarah Cloud Platform API Client
  * Used for OAuth token validation and project information retrieval
  */
 
 // Default to production, can be overridden via environment variable
-const INSFORGE_API_BASE = process.env.INSFORGE_API_BASE || 'https://api.insforge.dev';
+const YARAH_API_BASE = process.env.YARAH_API_BASE || 'https://api.yarah.dev';
 
 /**
- * Organization from Insforge API
+ * Organization from Yarah API
  */
 export interface Organization {
   id: string;
@@ -19,7 +19,7 @@ export interface Organization {
 }
 
 /**
- * Project from Insforge API
+ * Project from Yarah API
  */
 export interface Project {
   id: string;
@@ -55,16 +55,16 @@ export interface UserProfile {
 }
 
 /**
- * Error from Insforge API
+ * Error from Yarah API
  */
-export class InsforgeApiError extends Error {
+export class YarahApiError extends Error {
   constructor(
     message: string,
     public statusCode: number,
     public code?: string
   ) {
     super(message);
-    this.name = 'InsforgeApiError';
+    this.name = 'YarahApiError';
   }
 }
 
@@ -89,7 +89,7 @@ export class InsforgeApiError extends Error {
  * path for a cache miss, so it is also the worst case a user waits before being
  * told to retry.
  *
- * AbortSignal.timeout throws a TimeoutError, which is not an InsforgeApiError —
+ * AbortSignal.timeout throws a TimeoutError, which is not an YarahApiError —
  * so isAuthorizationRefusal() reads it as "could not tell" and it becomes a 503.
  * That is the intended route, and it is why this needs no special-casing
  * downstream.
@@ -99,7 +99,7 @@ const PLATFORM_TIMEOUT_MS = 10_000;
 /**
  * The platform has TWO path families, and guessing costs you a 404.
  *
- * Measured against api.insforge.dev rather than inferred from the neighbours:
+ * Measured against api.yarah.dev rather than inferred from the neighbours:
  *
  *   /auth/v1/profile         401   <- reachable      /api/auth/v1/profile      404
  *   /api/oauth/v1/revoke     401   <- reachable      /oauth/v1/revoke          404
@@ -115,7 +115,7 @@ const PLATFORM_TIMEOUT_MS = 10_000;
  * constant, so the two families are named once instead of being retyped per
  * call site.
  */
-const OAUTH_API_BASE = `${INSFORGE_API_BASE}/api/oauth/v1`;
+const OAUTH_API_BASE = `${YARAH_API_BASE}/api/oauth/v1`;
 
 /**
  * Every outbound call to the platform goes through this, so a new one cannot be
@@ -130,7 +130,7 @@ function platformFetch(url: string, init: Parameters<typeof fetch>[1] = {}) {
  * Validate OAuth token and get user profile
  */
 export async function validateToken(token: string): Promise<UserProfile> {
-  const response = await platformFetch(`${INSFORGE_API_BASE}/auth/v1/profile`, {
+  const response = await platformFetch(`${YARAH_API_BASE}/auth/v1/profile`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -140,7 +140,7 @@ export async function validateToken(token: string): Promise<UserProfile> {
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new InsforgeApiError(
+    throw new YarahApiError(
       `Token validation failed: ${errorText}`,
       response.status
     );
@@ -154,7 +154,7 @@ export async function validateToken(token: string): Promise<UserProfile> {
  * Get all organizations for the authenticated user
  */
 export async function getOrganizations(token: string): Promise<Organization[]> {
-  const response = await platformFetch(`${INSFORGE_API_BASE}/organizations/v1`, {
+  const response = await platformFetch(`${YARAH_API_BASE}/organizations/v1`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -164,7 +164,7 @@ export async function getOrganizations(token: string): Promise<Organization[]> {
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new InsforgeApiError(
+    throw new YarahApiError(
       `Failed to get organizations: ${errorText}`,
       response.status
     );
@@ -178,7 +178,7 @@ export async function getOrganizations(token: string): Promise<Organization[]> {
  * Get all projects for an organization
  */
 export async function getProjects(token: string, organizationId: string): Promise<Project[]> {
-  const response = await platformFetch(`${INSFORGE_API_BASE}/organizations/v1/${organizationId}/projects`, {
+  const response = await platformFetch(`${YARAH_API_BASE}/organizations/v1/${organizationId}/projects`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -188,7 +188,7 @@ export async function getProjects(token: string, organizationId: string): Promis
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new InsforgeApiError(
+    throw new YarahApiError(
       `Failed to get projects: ${errorText}`,
       response.status
     );
@@ -202,7 +202,7 @@ export async function getProjects(token: string, organizationId: string): Promis
  * Get project details
  */
 export async function getProject(token: string, projectId: string): Promise<Project> {
-  const response = await platformFetch(`${INSFORGE_API_BASE}/projects/v1/${projectId}`, {
+  const response = await platformFetch(`${YARAH_API_BASE}/projects/v1/${projectId}`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -212,7 +212,7 @@ export async function getProject(token: string, projectId: string): Promise<Proj
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new InsforgeApiError(
+    throw new YarahApiError(
       `Failed to get project: ${errorText}`,
       response.status
     );
@@ -226,7 +226,7 @@ export async function getProject(token: string, projectId: string): Promise<Proj
  * Get project access API key
  */
 export async function getProjectApiKey(token: string, projectId: string): Promise<string> {
-  const response = await platformFetch(`${INSFORGE_API_BASE}/projects/v1/${projectId}/access-api-key`, {
+  const response = await platformFetch(`${YARAH_API_BASE}/projects/v1/${projectId}/access-api-key`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -236,7 +236,7 @@ export async function getProjectApiKey(token: string, projectId: string): Promis
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new InsforgeApiError(
+    throw new YarahApiError(
       `Failed to get project API key: ${errorText}`,
       response.status
     );
@@ -279,7 +279,7 @@ export async function revokePlatformToken(token: string, clientId: string): Prom
 
   if (!response.ok) {
     const errorText = await response.text();
-    throw new InsforgeApiError(
+    throw new YarahApiError(
       `Failed to revoke platform token: ${errorText}`,
       response.status
     );
@@ -316,7 +316,7 @@ export interface PlatformTokens {
  * adding a platform call finds them all in one file. The fix for "six places
  * free to forget" cannot itself be a seventh place to remember.
  *
- * Throws InsforgeApiError for a platform response we could not read, and
+ * Throws YarahApiError for a platform response we could not read, and
  * returns the parsed body otherwise — INCLUDING an OAuth error body, because
  * `invalid_grant` is the platform answering, not a failure to reach it. The
  * caller needs those two apart.
@@ -346,7 +346,7 @@ export async function exchangePlatformCode(params: {
   } catch {
     // A response we cannot parse is not the platform declining — it is the
     // platform, or something between us and it, not answering properly.
-    throw new InsforgeApiError(
+    throw new YarahApiError(
       `Token exchange returned an unreadable response (HTTP ${response.status})`,
       response.status
     );
@@ -357,7 +357,7 @@ export async function exchangePlatformCode(params: {
  * Trade the platform refresh token for a fresh platform access token.
  *
  * Same endpoint, same client credentials, same two-outcome contract as the code
- * exchange above: a thrown InsforgeApiError means we could not get an answer, a
+ * exchange above: a thrown YarahApiError means we could not get an answer, a
  * returned body carrying `error` means the platform answered and declined. The
  * caller needs those apart, because one is retryable and the other means the
  * user has to sign in again.
@@ -387,7 +387,7 @@ export async function refreshPlatformToken(params: {
   try {
     return (await response.json()) as PlatformTokens;
   } catch {
-    throw new InsforgeApiError(
+    throw new YarahApiError(
       `Token refresh returned an unreadable response (HTTP ${response.status})`,
       response.status
     );
@@ -396,7 +396,7 @@ export async function refreshPlatformToken(params: {
 
 /**
  * Build the access host URL for a project
- * Format: https://{appkey}.{region}.insforge.app
+ * Format: https://{appkey}.{region}.apps.yarah.dev
  */
 export function buildAccessHost(project: Project): string {
   // Check if project has a customized domain
@@ -404,8 +404,8 @@ export function buildAccessHost(project: Project): string {
     return `https://${(project as any).customized_domain}`;
   }
 
-  // Standard format: https://{appkey}.{region}.insforge.app
-  return `https://${project.appkey}.${project.region}.insforge.app`;
+  // Standard format: https://{appkey}.{region}.apps.yarah.dev
+  return `https://${project.appkey}.${project.region}.apps.yarah.dev`;
 }
 
 /**

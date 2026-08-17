@@ -3,7 +3,7 @@ import { ProjectKeyCache, PROJECT_KEY_TTL_MS } from './project-key-cache.js';
 
 const value = {
   apiKey: 'ik_secret',
-  accessHost: 'https://p.insforge.app',
+  accessHost: 'https://p.apps.yarah.dev',
   projectName: 'demo',
   organizationId: 'org_1',
 };

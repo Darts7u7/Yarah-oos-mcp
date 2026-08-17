@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * Post-deploy acceptance check for a running insforge-mcp.
+ * Post-deploy acceptance check for a running yarah-mcp.
  *
- *   node scripts/verify-deploy.mjs https://mcp.insforge.dev [expected-version]
+ *   node scripts/verify-deploy.mjs https://mcp.yarah.dev [expected-version]
  *
  * Read-only: it fetches discovery documents and makes one unauthenticated MCP
  * request. It registers nothing and writes nothing. Exits non-zero on the first
@@ -172,7 +172,7 @@ if (typeof health.status === 'string' && health.status.startsWith('unreachable')
 // green against an empty deployment. Ours names itself; the placeholder cannot.
 check(
   '/health is our server, not a platform placeholder',
-  health.body?.server === 'insforge-mcp',
+  health.body?.server === 'yarah-mcp',
   `server=${JSON.stringify(health.body?.server)} body=${JSON.stringify(health.body)?.slice(0, 120)}`
 );
 
@@ -276,7 +276,7 @@ check(
 );
 
 // --- can it actually start a login? ---------------------------------------
-// validateConfig() only warns when INSFORGE_CLIENT_ID/SECRET are missing, so a
+// validateConfig() only warns when YARAH_CLIENT_ID/SECRET are missing, so a
 // server with no OAuth credentials starts, passes health checks and serves every
 // discovery document above — and then cannot log anyone in. /oauth/authorize
 // checks its credentials before it validates parameters, so a bare request

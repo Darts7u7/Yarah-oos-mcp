@@ -18,7 +18,7 @@ export default defineConfig({
     },
     server: {
       deps: {
-        inline: [/@insforge\/shared-schemas/],
+        inline: [/@yarah\/shared-schemas/],
       },
     },
   },

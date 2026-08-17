@@ -1,28 +1,28 @@
 <div align="center">
-  <a href="https://insforge.dev">
-    <img src="banner.png" alt="Insforge Banner">
+  <a href="https://yarah.dev">
+    <img src="banner.png" alt="Yarah Banner">
   </a>
 </div>
 
 <div align="center">
 
-[![MCP Badge](https://lobehub.com/badge/mcp/insforge-insforge-mcp)](https://lobehub.com/mcp/insforge-insforge-mcp)
+[![MCP Badge](https://lobehub.com/badge/mcp/yarah-yarah-mcp)](https://lobehub.com/mcp/yarah-yarah-mcp)
 
 </div>
 
-# Insforge MCP Server
+# Yarah MCP Server
 
-InsForge turns your coding agents into full-stack builders, letting them add backend features like auth, databases, file storage, serverless functions, and LLMs to your apps in seconds.
+Yarah turns your coding agents into full-stack builders, letting them add backend features like auth, databases, file storage, serverless functions, and LLMs to your apps in seconds.
 
-This repo is Model Context Protocol server for [Insforge](https://github.com/InsForge/insforge).
+This repo is Model Context Protocol server for [Yarah](https://github.com/Yarah/yarah).
 
-<a href="https://glama.ai/mcp/servers/@InsForge/insforge-mcp">
-  <img width="380" height="200" src="https://glama.ai/mcp/servers/@InsForge/insforge-mcp/badge" alt="Insforge Server MCP server" />
+<a href="https://glama.ai/mcp/servers/@Darts7u7/Yarah-oos-mcp">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@Darts7u7/Yarah-oos-mcp/badge" alt="Yarah Server MCP server" />
 </a>
 
 ## 📖 Documentation
 
-Please visit the [main Insforge repository](https://github.com/InsForge/insforge) for:
+Please visit the [main Yarah repository](https://github.com/Yarah/yarah) for:
 
 - Installation and setup instructions
 - Configuration guide
@@ -34,33 +34,33 @@ Please visit the [main Insforge repository](https://github.com/InsForge/insforge
 
 ### Automated Installation (Recommended)
 
-Use the InsForge installer to automatically configure MCP for your client:
+Use the Yarah installer to automatically configure MCP for your client:
 
 ```bash
 # Claude Code
-npx @insforge/install --client claude-code --env API_KEY=your_api_key --env API_BASE_URL=http://localhost:7130
+npx @yarahdev/install --client claude-code --env API_KEY=your_api_key --env API_BASE_URL=http://localhost:7130
 
 # Cursor
-npx @insforge/install --client cursor --env API_KEY=your_api_key --env API_BASE_URL=http://localhost:7130
+npx @yarahdev/install --client cursor --env API_KEY=your_api_key --env API_BASE_URL=http://localhost:7130
 
 # Windsurf
-npx @insforge/install --client windsurf --env API_KEY=your_api_key --env API_BASE_URL=http://localhost:7130
+npx @yarahdev/install --client windsurf --env API_KEY=your_api_key --env API_BASE_URL=http://localhost:7130
 
 # Cline
-npx @insforge/install --client cline --env API_KEY=your_api_key --env API_BASE_URL=http://localhost:7130
+npx @yarahdev/install --client cline --env API_KEY=your_api_key --env API_BASE_URL=http://localhost:7130
 
 # Roo Code
-npx @insforge/install --client roocode --env API_KEY=your_api_key --env API_BASE_URL=http://localhost:7130
+npx @yarahdev/install --client roocode --env API_KEY=your_api_key --env API_BASE_URL=http://localhost:7130
 # Trae
-npx @insforge/install --client trae --env API_KEY=your_api_key --env API_BASE_URL=http://localhost:7130
+npx @yarahdev/install --client trae --env API_KEY=your_api_key --env API_BASE_URL=http://localhost:7130
 
 # Install dev version for testing
-npx @insforge/install --client cursor --env API_KEY=your_api_key --env API_BASE_URL=http://localhost:7130 --dev
+npx @yarahdev/install --client cursor --env API_KEY=your_api_key --env API_BASE_URL=http://localhost:7130 --dev
 ```
 
 Replace:
-- `your_api_key` with your InsForge API key
-- `http://localhost:7130` with your InsForge instance URL (optional, defaults to localhost:7130)
+- `your_api_key` with your Yarah API key
+- `http://localhost:7130` with your Yarah instance URL (optional, defaults to localhost:7130)
 
 ### Manual Installation
 
@@ -69,11 +69,11 @@ If you prefer to manually configure your MCP client, add this to your MCP settin
 ```json
 {
   "mcpServers": {
-    "insforge": {
+    "yarah": {
       "command": "npx",
       "args": [
         "-y",
-        "@insforge/mcp@latest"
+        "@yarahdev/mcp@latest"
       ],
       "env": {
         "API_KEY": "your_api_key",
@@ -84,7 +84,7 @@ If you prefer to manually configure your MCP client, add this to your MCP settin
 }
 ```
 
-For detailed setup instructions, see the [Insforge Documentation](https://docs.insforge.dev).
+For detailed setup instructions, see the [Yarah Documentation](https://docs.yarah.dev).
 
 ## 🛠️ Development
 
@@ -113,4 +113,4 @@ Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-Part of the [Insforge](https://github.com/InsForge/insforge) project.
+Part of the [Yarah](https://github.com/Yarah/yarah) project.
