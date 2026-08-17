@@ -1,12 +1,10 @@
 <div align="center">
   <a href="https://yarah.dev">
-    <img src="banner.png" alt="Yarah Banner">
   </a>
 </div>
 
 <div align="center">
 
-[![MCP Badge](https://lobehub.com/badge/mcp/yarah-yarah-mcp)](https://lobehub.com/mcp/yarah-yarah-mcp)
 
 </div>
 
@@ -14,7 +12,7 @@
 
 Yarah turns your coding agents into full-stack builders, letting them add backend features like auth, databases, file storage, serverless functions, and LLMs to your apps in seconds.
 
-This repo is Model Context Protocol server for [Yarah](https://github.com/Yarah/yarah).
+This repo is Model Context Protocol server for [Yarah](https://github.com/Darts7u7/Yarah-oos).
 
 <a href="https://glama.ai/mcp/servers/@Darts7u7/Yarah-oos-mcp">
   <img width="380" height="200" src="https://glama.ai/mcp/servers/@Darts7u7/Yarah-oos-mcp/badge" alt="Yarah Server MCP server" />
@@ -22,7 +20,7 @@ This repo is Model Context Protocol server for [Yarah](https://github.com/Yarah/
 
 ## 📖 Documentation
 
-Please visit the [main Yarah repository](https://github.com/Yarah/yarah) for:
+Please visit the [main Yarah repository](https://github.com/Darts7u7/Yarah-oos) for:
 
 - Installation and setup instructions
 - Configuration guide
@@ -113,4 +111,4 @@ Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-Part of the [Yarah](https://github.com/Yarah/yarah) project.
+Part of the [Yarah](https://github.com/Darts7u7/Yarah-oos) project.

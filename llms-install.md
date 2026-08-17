@@ -218,5 +218,5 @@ For more information, visit the [Yarah documentation](https://docs.yarah.dev).
 
 - **Documentation**: https://docs.yarah.dev
 - **Discord**: https://yarah.dev/community
-- **GitHub**: https://github.com/Yarah/yarah
+- **GitHub**: https://github.com/Darts7u7/Yarah-oos
 - **Email**: info@yarah.dev

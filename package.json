@@ -1,6 +1,6 @@
 {
   "name": "@yarahdev/mcp",
-  "version": "1.2.12",
+  "version": "1.2.13",
   "description": "MCP (Model Context Protocol) server for Yarah backend-as-a-service",
   "mcpName": "io.github.Darts7u7/Yarah-oos-mcp",
   "type": "module",

@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 const PLATFORM_API_BASE = 'https://api.yarah.dev';
 
 /**
- * Parse app-key from an Yarah API base URL.
+ * Parse app-key from a Yarah API base URL.
  * Valid format: https://{app-key}.{region}.apps.yarah.dev
  * Returns the app-key or null if the URL doesn't match.
  */

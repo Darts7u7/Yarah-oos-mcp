@@ -89,7 +89,7 @@ export class YarahApiError extends Error {
  * path for a cache miss, so it is also the worst case a user waits before being
  * told to retry.
  *
- * AbortSignal.timeout throws a TimeoutError, which is not an YarahApiError —
+ * AbortSignal.timeout throws a TimeoutError, which is not a YarahApiError —
  * so isAuthorizationRefusal() reads it as "could not tell" and it becomes a 503.
  * That is the intended route, and it is why this needs no special-casing
  * downstream.
